@@ -1,3 +1,33 @@
+let walletAddress = null;
+let demoSolBalance = 1.0; // 1 SOL als beginsaldo voor demo
+let spinCost = 0.01;
+
+const walletStatus = document.getElementById('wallet-status');
+const cryptoBalance = document.getElementById('crypto-balance');
+
+// Koppel Phantom Wallet
+const connectWallet = async () => {
+  if (window.solana && window.solana.isPhantom) {
+    try {
+      const response = await window.solana.connect();
+      walletAddress = response.publicKey.toString();
+      walletStatus.textContent = `Wallet verbonden: ${walletAddress}`;
+      updateCryptoBalance();
+    } catch (err) {
+      console.error("Wallet connectie geannuleerd");
+    }
+  } else {
+    alert("Installeer Phantom Wallet extensie om verbinding te maken.");
+  }
+};
+
+document.getElementById('connect-wallet').addEventListener('click', connectWallet);
+
+// Update demo balance
+function updateCryptoBalance() {
+  cryptoBalance.textContent = `Demo Balance: ${demoSolBalance.toFixed(3)} SOL`;
+}
+
 let points = 10000;
 let currentBet = 10;
 
