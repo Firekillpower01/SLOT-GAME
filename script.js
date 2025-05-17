@@ -15,6 +15,27 @@ document.getElementById('bet-demo-sol').addEventListener('click', () => {
   // Simuleer de spin
   spinReels();
   messageDisplay.textContent = "Je hebt 0.01 SOL ingezet!";
+  document.getElementById('bet-demo-sol').addEventListener('click', () => {
+  if (!walletAddress) {
+    messageDisplay.textContent = "Verbind eerst je wallet om te spelen!";
+    return;
+  }
+
+  if (demoSolBalance < 0.01) {
+    messageDisplay.textContent = "Niet genoeg demo SOL!";
+    return;
+  }
+
+  demoSolBalance -= 0.01;
+  updateCryptoBalance();
+  spinReels();
+
+  let winst = Math.random() < 0.3 ? 0.03 : 0; // 30% kans op winst
+  demoSolBalance += winst;
+  updateCryptoBalance();
+  showResultMessage(winst);
+});
+
 });
 let walletAddress = null;
 let demoSolBalance = 1.0; // 1 SOL als beginsaldo voor demo
