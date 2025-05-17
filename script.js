@@ -1,133 +1,83 @@
-const spinBtn = document.getElementById('spinBtn');
-const message = document.getElementById('message');
-const pointsDisplay = document.getElementById('points');
-const wagerInput = document.getElementById('wager');
-const decreaseWagerBtn = document.getElementById('decreaseWager');
-const increaseWagerBtn = document.getElementById('increaseWager');
-const reelsContainer = document.querySelector('.reels-container');
-
-// Sound files (ensure these files exist in your project directory)
-const spinSound = new Audio('spin-sound.mp3');
-const winSound = new Audio('win-sound.mp3');
-const loseSound = new Audio('lose-sound.mp3');
-const bonusSound = new Audio('bonus-sound.mp3');
-
-// Symbols (including wild symbol 🌟)
-const symbols = ['🍒', '🍋', '🍊', '🔔', '🍀', '💎', '7️⃣', '💰', '🌟']; // Wild Symbol added
-
+// Variables
 let points = 10000;
-let wager = 100;
-let wildSymbol = '🌟';
+let currentBet = 100;
+let symbols = ['🍒', '🍋', '🍊', '🍉', '7️⃣', '🍀'];
+let reel1, reel2, reel3;
+let isSpinning = false;
 
-// Update the points display
-function updatePoints() {
-  pointsDisplay.textContent = `Points: ${points}`;
+// Initialize Reels and Controls
+window.onload = function () {
+    reel1 = document.getElementById('reel1');
+    reel2 = document.getElementById('reel2');
+    reel3 = document.getElementById('reel3');
+    
+    updateDisplay();
+
+    document.getElementById('spin-button').addEventListener('click', spin);
+    document.getElementById('increase-bet').addEventListener('click', increaseBet);
+    document.getElementById('decrease-bet').addEventListener('click', decreaseBet);
+};
+
+// Update Points Display
+function updateDisplay() {
+    document.getElementById('points').innerText = `Points: ${points}`;
+    document.getElementById('message').innerText = `Bet: ${currentBet} Points`;
 }
 
-// Generate the reels
-function generateReels() {
-  reelsContainer.innerHTML = '';
-  for (let i = 0; i < 5; i++) {
-    const reel = document.createElement('div');
-    reel.classList.add('reel');
-    reel.dataset.reelIndex = i;
-    reelsContainer.appendChild(reel);
-  }
-}
+// Spin the Reels
+function spin() {
+    if (isSpinning || points < currentBet) {
+        return;
+    }
 
-// Spin the reels
-function spinReels() {
-  wager = parseInt(wagerInput.value);
+    // Deduct the bet
+    points -= currentBet;
+    updateDisplay();
 
-  if (wager <= 0 || wager > points) {
-    message.textContent = `Invalid wager! You have ${points} points.`;
-    return;
-  }
+    // Start spinning
+    isSpinning = true;
+    document.getElementById('spin-button').disabled = true;
+    
+    let spin1 = Math.floor(Math.random() * symbols.length);
+    let spin2 = Math.floor(Math.random() * symbols.length);
+    let spin3 = Math.floor(Math.random() * symbols.length);
 
-  points -= wager;
-  updatePoints();
-  message.textContent = 'Spinning...';
-  playSound(spinSound);
+    reel1.innerText = symbols[spin1];
+    reel2.innerText = symbols[spin2];
+    reel3.innerText = symbols[spin3];
 
-  const reels = document.querySelectorAll('.reel');
-  reels.forEach((reel, index) => {
-    reel.classList.add('active');
+    // Simulate reel spinning with delay
     setTimeout(() => {
-      reel.classList.remove('active');
-    }, 2000);
-  });
-
-  setTimeout(() => {
-    const reelSymbols = [];
-    reels.forEach((reel) => {
-      const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-      reel.textContent = randomSymbol;
-      reelSymbols.push(randomSymbol);
-    });
-    checkWin(reelSymbols);
-  }, 2000);
+        checkWin(spin1, spin2, spin3);
+        isSpinning = false;
+        document.getElementById('spin-button').disabled = false;
+    }, 1000);
 }
 
-// Check win conditions
-function checkWin(reelSymbols) {
-  const isWin = reelSymbols.every(symbol => symbol === reelSymbols[0]);
-  const isWild = reelSymbols.includes(wildSymbol);
+// Check Win Condition
+function checkWin(symbol1, symbol2, symbol3) {
+    if (symbol1 === symbol2 && symbol2 === symbol3) {
+        points += currentBet * 10; // Payout multiplier for matching symbols
+        document.getElementById('message').innerText = `You Win! Payout: ${currentBet * 10} Points!`;
+    } else {
+        document.getElementById('message').innerText = "Try Again!";
+    }
 
-  const bonusCount = reelSymbols.filter(symbol => symbol === '💰').length;
-  const isBonus = bonusCount >= 3;
-
-  if (isBonus) {
-    message.textContent = 'Bonus Round Activated!';
-    playSound(bonusSound);
-    startBonusRound();
-  } else if (isWin || isWild) {
-    const payout = isWild ? 3 : 1;
-    points += wager * payout;
-    updatePoints();
-    message.textContent = `You win! Payout: x${payout}`;
-    playSound(winSound);
-    displayWinEffects();
-  } else {
-    message.textContent = 'Try again!';
-    playSound(loseSound);
-  }
+    updateDisplay();
 }
 
-// Display visual effects on win
-function displayWinEffects() {
-  document.body.style.background = 'linear-gradient(45deg, #f1c40f, #e67e22)';
-  setTimeout(() => {
-    document.body.style.background = 'linear-gradient(45deg, #232c52, #0f0e34)';
-  }, 1500);
+// Increase Bet Amount
+function increaseBet() {
+    if (points >= currentBet + 100) {
+        currentBet += 100;
+        updateDisplay();
+    }
 }
 
-// Bonus round animation
-function startBonusRound() {
-  setTimeout(() => {
-    message.textContent = 'Bonus Round Over!';
-    document.body.style.background = 'linear-gradient(45deg, #3498db, #2980b9)';
-  }, 3000);
+// Decrease Bet Amount
+function decreaseBet() {
+    if (currentBet > 100) {
+        currentBet -= 100;
+        updateDisplay();
+    }
 }
-
-// Random payout multiplier
-function getRandomPayout() {
-  return Math.floor(Math.random() * 5) + 1;
-}
-
-// Adjust wager
-decreaseWagerBtn.addEventListener('click', () => {
-  wager = Math.max(1, wager - 100);
-  wagerInput.value = wager;
-});
-
-increaseWagerBtn.addEventListener('click', () => {
-  wager = Math.min(10000, wager + 100);
-  wagerInput.value = wager;
-});
-
-// Spin button functionality
-spinBtn.addEventListener('click', spinReels);
-
-// Initialize the game
-generateReels();
-updatePoints();
