@@ -25,6 +25,40 @@ h1 {
   margin-bottom: 10px;
 }
 
+#wager-controls {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+}
+
+#wager-controls button {
+  background-color: #fd084e;
+  color: white;
+  padding: 5px 10px;
+  font-size: 1.5rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 0 5px;
+  transition: background-color 0.3s;
+}
+
+#wager-controls button:hover {
+  background-color: #fd6a84;
+}
+
+#wager-controls button:active {
+  transform: scale(0.98);
+}
+
+#wager-controls input {
+  font-size: 1.2rem;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 5px;
+  width: 80px;
+}
+
 .reels {
   display: flex;
   justify-content: space-around;
@@ -66,9 +100,3 @@ button:disabled {
   cursor: not-allowed;
 }
 
-input {
-  font-size: 1.2rem;
-  padding: 5px;
-  margin: 5px;
-  border-radius: 5px;
-}
