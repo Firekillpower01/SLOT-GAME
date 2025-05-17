@@ -167,3 +167,31 @@ document.getElementById('bet-demo-sol').addEventListener('click', () => {
   spinReels();
   messageDisplay.textContent = "Je hebt 0.01 SOL ingezet!";
 });
+// Update balance
+function updateCryptoBalance() {
+  cryptoBalance.textContent = `Demo Balance: ${demoSolBalance.toFixed(3)} SOL`;
+}
+
+// Simuleer draaien van de rollen
+function spinReels() {
+  console.log("Draaien..."); // hier komt jouw spin-logica
+}
+
+// Event voor de inzetknop
+document.getElementById('bet-demo-sol').addEventListener('click', () => {
+  if (!walletAddress) {
+    messageDisplay.textContent = "Verbind eerst je wallet om te spelen!";
+    return;
+  }
+
+  if (demoSolBalance < 0.01) {
+    messageDisplay.textContent = "Niet genoeg demo SOL!";
+    return;
+  }
+
+  demoSolBalance -= 0.01;
+  updateCryptoBalance();
+  spinReels();
+  messageDisplay.textContent = "Je hebt 0.01 SOL ingezet!";
+});
+
