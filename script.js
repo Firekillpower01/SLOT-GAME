@@ -2,6 +2,8 @@ const spinBtn = document.getElementById('spinBtn');
 const message = document.getElementById('message');
 const pointsDisplay = document.getElementById('points');
 const wagerInput = document.getElementById('wager');
+const decreaseWagerBtn = document.getElementById('decreaseWager');
+const increaseWagerBtn = document.getElementById('increaseWager');
 const reelsContainer = document.querySelector('.reels');
 
 // Symbols to display
@@ -119,6 +121,17 @@ function getRandomPayout() {
   // Random payout from 1x to 5x for winning lines
   return Math.floor(Math.random() * 5) + 1;
 }
+
+// Increase and decrease wager values
+decreaseWagerBtn.addEventListener('click', () => {
+  wager = Math.max(1, wager - 100);
+  wagerInput.value = wager;
+});
+
+increaseWagerBtn.addEventListener('click', () => {
+  wager = Math.min(10000, wager + 100);
+  wagerInput.value = wager;
+});
 
 // Attach event listener to Spin button
 spinBtn.addEventListener('click', spinReels);
