@@ -1,55 +1,55 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PUMP RAIDERS – Ultimate Slot Game</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>PUMP RAIDERS</title>
+    <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-    <!-- Slot Machine Container -->
-    <div class="slot-machine-container">
+<div class="slot-machine-container">
+    <h1>PUMP RAIDERS</h1>
 
-        <!-- Titel -->
-        <h1>PUMP RAIDERS</h1>
-
-        <!-- Wallet Connectie & Saldo -->
-        <div class="wallet-interface">
-            <button id="connect-wallet">🔗 Verbind Phantom Wallet</button>
-            <div id="wallet-status">Niet verbonden</div>
-            <div id="crypto-balance">Demo Balance: 1.000 SOL</div>
-        </div>
-
-        <!-- Rollen -->
-        <div class="reels-container">
-            <div class="reel" id="reel1">🍒</div>
-            <div class="reel" id="reel2">🍋</div>
-            <div class="reel" id="reel3">🍊</div>
-        </div>
-
-        <!-- Informatie -->
-        <div class="info">
-            <div id="points">Points: 10000</div>
-            <div id="bet">Inzet: 100</div>
-        </div>
-
-        <!-- Knoppen -->
-        <div class="controls">
-            <button id="decrease-bet">-</button>
-            <button id="increase-bet">+</button>
-            <button id="spin-button">Spin</button>
-            <button id="bet-demo-sol">Inzet 0.01 SOL</button>
-        </div>
-
-        <!-- Bericht -->
-        <div id="message">Spin en Win!</div>
-
+    <!-- Wallet UI -->
+    <div class="wallet-interface">
+        <button id="connect-wallet">🔗 Verbind Phantom Wallet</button>
+        <div id="wallet-status">Niet verbonden</div>
+        <div id="crypto-balance">Demo Balance: 1.000 SOL</div>
     </div>
 
-    <!-- JavaScript & Solana Web3 -->
-    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.73.3/lib/index.iife.min.js"></script>
-    <script src="script.js"></script>
+    <!-- Reels Grid (5x3) -->
+    <div class="reels-container" id="reels">
+        <!-- 5 kolommen × 3 rijen -->
+        <!-- Elke kolom is een div met 3 elementen erin -->
+        <!-- Rijen worden dynamisch gegenereerd via JS -->
+    </div>
 
+    <!-- Info -->
+    <div class="info">
+        <div id="points">Points: 10000</div>
+        <div id="bet">Inzet: 100</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button id="decrease-bet">-</button>
+        <button id="increase-bet">+</button>
+        <button id="spin-button">Spin</button>
+        <button id="bet-demo-sol">Inzet 0.01 SOL</button>
+    </div>
+
+    <!-- Bericht -->
+    <div id="message">Spin en Win!</div>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard">
+        <h2>🏆 Leaderboard</h2>
+        <ol id="leaderboard-list"></ol>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.73.3/lib/index.iife.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
