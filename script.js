@@ -24,7 +24,28 @@ bgMusic.loop = true;
 bgMusic.volume = 0.5;
 bgMusic.play().catch(() => {});
 
-// Muziek toggle
+let soundEnabled = true;
+
+// Geluid toggle knop
+const soundToggleBtn = document.createElement('button');
+soundToggleBtn.id = 'sound-toggle';
+soundToggleBtn.innerText = '🔊';
+soundToggleBtn.style.position = 'fixed';
+soundToggleBtn.style.top = '10px';
+soundToggleBtn.style.right = '10px';
+soundToggleBtn.style.zIndex = '1000';
+document.body.appendChild(soundToggleBtn);
+
+soundToggleBtn.addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  bgMusic.volume = soundEnabled ? 0.5 : 0;
+  spinSound.muted = !soundEnabled;
+  winSound.muted = !soundEnabled;
+  loseSound.muted = !soundEnabled;
+  soundToggleBtn.innerText = soundEnabled ? '🔊' : '🔇';
+});
+
+// Muziek toggle via M toets
 document.addEventListener('keydown', (e) => {
   if (e.key === 'm') {
     bgMusic.paused ? bgMusic.play() : bgMusic.pause();
@@ -67,6 +88,7 @@ document.getElementById('decrease-bet').addEventListener('click', () => {
   }
 });
 
+// Spin knoppen
 document.getElementById('spin-button').addEventListener('click', handlePointSpin);
 document.getElementById('bet-demo-sol').addEventListener('click', handleSolSpin);
 
@@ -107,7 +129,7 @@ function handleSolSpin() {
 
 function playSpin(mode) {
   const reelValues = ['🍒', '🍋', '🍊', '🍉', '💎', '⭐', '7️⃣', '🍇', '🍌'];
-  spinSound.play();
+  if (soundEnabled) spinSound.play();
 
   reels.forEach(reel => {
     const symbol = reelValues[Math.floor(Math.random() * reelValues.length)];
@@ -123,17 +145,21 @@ function playSpin(mode) {
 
 function checkWinline(mode) {
   const winlines = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontaal
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Verticaal
-    [0, 4, 8], [2, 4, 6]            // Diagonaal
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],       // Horizontaal
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],       // Verticaal
+    [0, 4, 8], [2, 4, 6],                 // Diagonaal
+    [0, 4, 5], [3, 4, 8], [1, 4, 6]        // Extra creatieve lijnen
   ];
 
   const values = reels.map(r => r.textContent);
   let won = false;
 
+  reels.forEach(r => r.classList.remove('winline'));
+
   for (let line of winlines) {
     if (values[line[0]] === values[line[1]] && values[line[1]] === values[line[2]]) {
       won = true;
+      line.forEach(index => reels[index].classList.add('winline'));
       break;
     }
   }
@@ -145,12 +171,12 @@ function checkWinline(mode) {
       pointsDisplay.textContent = `Points: ${points}`;
       messageDisplay.textContent = `🎉 Gewonnen! ${winnings} punten!`;
     }
-    winSound.play();
+    if (soundEnabled) winSound.play();
   } else {
     if (mode === 'points') {
       messageDisplay.textContent = "Helaas, probeer opnieuw.";
     }
-    loseSound.play();
+    if (soundEnabled) loseSound.play();
   }
 }
 
