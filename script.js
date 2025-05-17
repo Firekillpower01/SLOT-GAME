@@ -1,50 +1,19 @@
-document.getElementById('bet-demo-sol').addEventListener('click', () => {
-  if (!walletAddress) {
-    messageDisplay.textContent = "Verbind eerst je wallet om te spelen!";
-    return;
-  }
-
-  if (demoSolBalance < 0.01) {
-    messageDisplay.textContent = "Niet genoeg demo SOL! Verhoog je saldo.";
-    return;
-  }
-
-  demoSolBalance -= 0.01;
-  updateCryptoBalance();
-
-  // Simuleer de spin
-  spinReels();
-  messageDisplay.textContent = "Je hebt 0.01 SOL ingezet!";
-  document.getElementById('bet-demo-sol').addEventListener('click', () => {
-  if (!walletAddress) {
-    messageDisplay.textContent = "Verbind eerst je wallet om te spelen!";
-    return;
-  }
-
-  if (demoSolBalance < 0.01) {
-    messageDisplay.textContent = "Niet genoeg demo SOL!";
-    return;
-  }
-
-  demoSolBalance -= 0.01;
-  updateCryptoBalance();
-  spinReels();
-
-  let winst = Math.random() < 0.3 ? 0.03 : 0; // 30% kans op winst
-  demoSolBalance += winst;
-  updateCryptoBalance();
-  showResultMessage(winst);
-});
-
-});
 let walletAddress = null;
-let demoSolBalance = 1.0; // 1 SOL als beginsaldo voor demo
+let demoSolBalance = 1.0; // demo balans
 let spinCost = 0.01;
+let points = 10000;
+let currentBet = 10;
 
 const walletStatus = document.getElementById('wallet-status');
 const cryptoBalance = document.getElementById('crypto-balance');
+const pointsDisplay = document.getElementById('points');
+const betDisplay = document.getElementById('bet');
+const messageDisplay = document.getElementById('message');
+const reel1 = document.getElementById('reel1');
+const reel2 = document.getElementById('reel2');
+const reel3 = document.getElementById('reel3');
 
-// Koppel Phantom Wallet
+// Wallet verbinden
 const connectWallet = async () => {
   if (window.solana && window.solana.isPhantom) {
     try {
@@ -59,146 +28,67 @@ const connectWallet = async () => {
     alert("Installeer Phantom Wallet extensie om verbinding te maken.");
   }
 };
-
 document.getElementById('connect-wallet').addEventListener('click', connectWallet);
 
-// Update demo balance
-function updateCryptoBalance() {
-  cryptoBalance.textContent = `Demo Balance: ${demoSolBalance.toFixed(3)} SOL`;
-}
-document.getElementById('bet-demo-sol').addEventListener('click', () => {
-  if (!walletAddress) {
-    messageDisplay.textContent = "Verbind eerst je wallet om te spelen!";
-    return;
+// Inzet verhogen
+document.getElementById('increase-bet').addEventListener('click', () => {
+  if (points >= currentBet + 10) {
+    currentBet += 10;
+    betDisplay.innerText = `Inzet: ${currentBet}`;
+  } else {
+    messageDisplay.innerText = "Niet genoeg punten voor deze inzet!";
   }
-
-  if (demoSolBalance < 0.01) {
-    messageDisplay.textContent = "Niet genoeg demo SOL! Verhoog je saldo.";
-    return;
-  }
-
-  demoSolBalance -= 0.01;
-  updateCryptoBalance();
-
-  // Simuleer de spin
-  spinReels();
-  messageDisplay.textContent = "Je hebt 0.01 SOL ingezet!";
 });
 
+// Inzet verlagen
+document.getElementById('decrease-bet').addEventListener('click', () => {
+  if (currentBet > 10) {
+    currentBet -= 10;
+    betDisplay.innerText = `Inzet: ${currentBet}`;
+  }
+});
 
-let points = 10000;
-let currentBet = 10;
-
-const pointsDisplay = document.getElementById('points');
-const betDisplay = document.getElementById('bet');
-const messageDisplay = document.getElementById('message');
-const reel1 = document.getElementById('reel1');
-const reel2 = document.getElementById('reel2');
-const reel3 = document.getElementById('reel3');
-
+// Spin-knop
 document.getElementById('spin-button').addEventListener('click', () => {
   if (!walletAddress) {
-    messageDisplay.textContent = "Verbind eerst je wallet om te spinnen!";
+    messageDisplay.innerText = "Verbind eerst je wallet om te spinnen!";
     return;
   }
 
   if (demoSolBalance < spinCost) {
-    messageDisplay.textContent = "Niet genoeg SOL (demo)! Verhoog je demo balance.";
+    messageDisplay.innerText = "Niet genoeg demo SOL! Verhoog je demo balance.";
     return;
   }
 
   demoSolBalance -= spinCost;
   updateCryptoBalance();
 
-  // ... jouw bestaande spin logica hieronder
-});
+  const reelValues = ['🍒', '🍋', '🍊', '🍉', '💎', '⭐', '7️⃣'];
 
+  function spinReel(reel) {
+    const randomSymbol = reelValues[Math.floor(Math.random() * reelValues.length)];
+    reel.innerText = randomSymbol;
+  }
 
-// Verhoog de inzet
-document.getElementById('increase-bet').addEventListener('click', () => {
-    if (points >= currentBet + 10) {
-        currentBet += 10;
-        betDisplay.innerText = `Inzet: ${currentBet}`;
+  spinReel(reel1);
+  spinReel(reel2);
+  spinReel(reel3);
+
+  // Simuleer resultaat
+  setTimeout(() => {
+    const result = [reel1.innerText, reel2.innerText, reel3.innerText];
+    if (result[0] === result[1] && result[1] === result[2]) {
+      let winnings = currentBet * 10;
+      points += winnings;
+      pointsDisplay.innerText = `Points: ${points}`;
+      messageDisplay.innerText = `🎉 Je hebt gewonnen! ${winnings} punten!`;
     } else {
-        messageDisplay.innerText = "Niet genoeg punten voor deze inzet!";
+      messageDisplay.innerText = "Helaas, probeer opnieuw!";
     }
+  }, 1000);
 });
 
-// Verlaag de inzet
-document.getElementById('decrease-bet').addEventListener('click', () => {
-    if (currentBet > 10) {
-        currentBet -= 10;
-        betDisplay.innerText = `Inzet: ${currentBet}`;
-    }
-});
-
-// Spin-knop
-document.getElementById('spin-button').addEventListener('click', () => {
-    if (points < currentBet) {
-        messageDisplay.innerText = "Je hebt niet genoeg punten om te spelen!";
-        return;
-    }
-
-    // Verminder punten op basis van de inzet
-    points -= currentBet;
-    pointsDisplay.innerText = `Points: ${points}`;
-
-    // Simuleer het draaien van de rollen
-    messageDisplay.innerText = "Draaiende rollen...";
-
-    const reelValues = ['🍒', '🍋', '🍊', '🍉', '💎', '⭐', '7️⃣'];
-
-    function spinReel(reel) {
-        const randomSymbol = reelValues[Math.floor(Math.random() * reelValues.length)];
-        reel.innerText = randomSymbol;
-    }
-
-    spinReel(reel1);
-    spinReel(reel2);
-    spinReel(reel3);
-
-    // Simuleer een resultaat en bepaal de uitbetaling
-    setTimeout(() => {
-        const result = [reel1.innerText, reel2.innerText, reel3.innerText];
-        if (result[0] === result[1] && result[1] === result[2]) {
-            let winnings = currentBet * 10; // 10x uitbetaling voor drie dezelfde symbolen
-            points += winnings;
-            pointsDisplay.innerText = `Points: ${points}`;
-            messageDisplay.innerText = `Je hebt gewonnen! ${winnings} punten!`;
-        } else {
-            messageDisplay.innerText = "Helaas, probeer het opnieuw!";
-        }
-    }, 1000);
-});
-document.getElementById('bet-demo-sol').addEventListener('click', () => {
-  if (!walletAddress) {
-    messageDisplay.textContent = "Verbind eerst je wallet om te spelen!";
-    return;
-  }
-
-  if (demoSolBalance < 0.01) {
-    messageDisplay.textContent = "Niet genoeg demo SOL! Verhoog je saldo.";
-    return;
-  }
-
-  demoSolBalance -= 0.01;
-  updateCryptoBalance();
-
-  // Simuleer de spin
-  spinReels();
-  messageDisplay.textContent = "Je hebt 0.01 SOL ingezet!";
-});
-// Update balance
-function updateCryptoBalance() {
-  cryptoBalance.textContent = `Demo Balance: ${demoSolBalance.toFixed(3)} SOL`;
-}
-
-// Simuleer draaien van de rollen
-function spinReels() {
-  console.log("Draaien..."); // hier komt jouw spin-logica
-}
-
-// Event voor de inzetknop
+// Demo SOL inzet
 document.getElementById('bet-demo-sol').addEventListener('click', () => {
   if (!walletAddress) {
     messageDisplay.textContent = "Verbind eerst je wallet om te spelen!";
@@ -213,33 +103,34 @@ document.getElementById('bet-demo-sol').addEventListener('click', () => {
   demoSolBalance -= 0.01;
   updateCryptoBalance();
   spinReels();
-  messageDisplay.textContent = "Je hebt 0.01 SOL ingezet!";
+
+  let winst = Math.random() < 0.3 ? 0.03 : 0;
+  demoSolBalance += winst;
+  updateCryptoBalance();
+  showResultMessage(winst);
 });
 
-function spinReels()
-  }
-function showResultMessage(winAmount) {
-  const messageDisplay = document.getElementById('message-display');
-  if (winAmount > 0) {
-    messageDisplay.textContent = `🎉 Je hebt ${winAmount.toFixed(2)} SOL gewonnen!`;
-  } else {
-    messageDisplay.textContent = `❌ Geen winst deze ronde. Probeer opnieuw!`;
-  }
-  let winst = Math.random() < 0.3 ? 0.03 : 0;
-demoSolBalance += winst;
-updateCryptoBalance();
-showResultMessage(winst);
+// Functie: demo balans bijwerken
+function updateCryptoBalance() {
+  cryptoBalance.textContent = `Demo Balance: ${demoSolBalance.toFixed(3)} SOL`;
+}
 
-  {
+// Functie: animatie voor spin
+function spinReels() {
   const reels = document.querySelectorAll('.reel');
-
   reels.forEach((reel) => {
     reel.classList.add('spin-animation');
     setTimeout(() => {
       reel.classList.remove('spin-animation');
     }, 500);
   });
+}
 
-  // Voeg hier je bestaande spin-logica toe (zoals symbolen randomiseren)
-
+// Functie: resultaat tonen
+function showResultMessage(winAmount) {
+  if (winAmount > 0) {
+    messageDisplay.textContent = `🎉 Je hebt ${winAmount.toFixed(2)} SOL gewonnen!`;
+  } else {
+    messageDisplay.textContent = `❌ Geen winst deze ronde. Probeer opnieuw!`;
+  }
 }
