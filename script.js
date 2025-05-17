@@ -8,7 +8,9 @@ const reel1 = document.getElementById('reel1');
 const reel2 = document.getElementById('reel2');
 const reel3 = document.getElementById('reel3');
 
+// Verhoog de inzet
 document.getElementById('increase-bet').addEventListener('click', () => {
+    console.log('Increase Bet Button Clicked');
     if (points >= currentBet + 10) {
         currentBet += 10;
         betDisplay.innerText = `Inzet: ${currentBet}`;
@@ -17,19 +19,22 @@ document.getElementById('increase-bet').addEventListener('click', () => {
     }
 });
 
+// Verlaag de inzet
 document.getElementById('decrease-bet').addEventListener('click', () => {
+    console.log('Decrease Bet Button Clicked');
     if (currentBet > 10) {
         currentBet -= 10;
         betDisplay.innerText = `Inzet: ${currentBet}`;
     }
 });
 
+// Spin-knop
 document.getElementById('spin-button').addEventListener('click', () => {
     if (points < currentBet) {
         messageDisplay.innerText = "Je hebt niet genoeg punten om te spelen!";
         return;
     }
-    
+
     // Verminder punten op basis van de inzet
     points -= currentBet;
     pointsDisplay.innerText = `Points: ${points}`;
