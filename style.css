@@ -86,10 +86,6 @@ h1 {
 }
 
 /* Animatie voor de rollen */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
 
 /* Styling van de knoppen */
 button:active {
