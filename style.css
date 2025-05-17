@@ -145,4 +145,37 @@ button:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3);
 }
+.slot-machine-container {
+    background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+    padding: 30px;
+    border-radius: 20px;
+    border: 6px solid #f39c12;
+    box-shadow: 0 0 40px rgba(255, 165, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.2) inset;
+}
+.info {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    background: #111;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #444;
+}
+@media (max-width: 768px) {
+  .slot-machine-container {
+    width: 90%;
+  }
+
+  .reel {
+    width: 80px;
+    height: 80px;
+    font-size: 1.5rem;
+  }
+
+  .controls button {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+}
 
