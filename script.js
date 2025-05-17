@@ -1,3 +1,23 @@
+let walletConnected = false;
+
+document.getElementById('connect-wallet').addEventListener('click', () => {
+  walletConnected = true;
+  document.getElementById('wallet-status').innerText = 'Wallet Verbonden ✅';
+});
+
+function generateRandomSymbols() {
+  const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '🃏']; // '🃏' is wild
+  const result = [];
+  for (let row = 0; row < 3; row++) {
+    const reelRow = [];
+    for (let col = 0; col < 3; col++) {
+      const randIndex = Math.floor(Math.random() * symbols.length);
+      reelRow.push(symbols[randIndex]);
+    }
+    result.push(reelRow);
+  }
+  return result;
+}
 // ... (bestaande code blijft gelijk)
 
 let bonusSpinsRemaining = 0;
