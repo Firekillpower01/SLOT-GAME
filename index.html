@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,31 +8,35 @@
 </head>
 <body>
 
+    <!-- Slot Machine Container -->
     <div class="slot-machine-container">
-        <!-- Slot Machine Frame -->
-        <div class="slot-machine-frame"></div>
-
-        <!-- Slot Game Title -->
+        
+        <!-- Slot Machine Header -->
         <h1>Ultimate Slot Game</h1>
         
-        <!-- Points Display -->
-        <div id="points">Points: 10000</div>
-        
-        <!-- Slot Reels (Horizontal Layout) -->
-        <div class="reels-container-horizontal">
+        <!-- Slot Machine Reels (3 in totaal) -->
+        <div class="reels-container">
             <div class="reel" id="reel1"></div>
             <div class="reel" id="reel2"></div>
             <div class="reel" id="reel3"></div>
         </div>
         
-        <!-- Buttons and Controls (Below Reels) -->
-        <div id="message">Spin and Win!</div>
-
-        <div id="wager-controls">
+        <!-- Points and Bet Display -->
+        <div class="info">
+            <div id="points">Points: 10000</div>
+            <div id="bet">Inzet: 10</div>
+        </div>
+        
+        <!-- Spin and Bet Controls -->
+        <div class="controls">
             <button id="decrease-bet">-</button>
             <button id="increase-bet">+</button>
             <button id="spin-button">Spin</button>
         </div>
+        
+        <!-- Message Display -->
+        <div id="message">Spin en Win!</div>
+        
     </div>
 
     <script src="script.js"></script>
