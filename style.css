@@ -1,96 +1,125 @@
 /* Basisinstellingen */
 body {
-    font-family: 'Arial', sans-serif;
-    background: #1e1e1e;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    flex-direction: column;
+  font-family: 'Arial', sans-serif;
+  background: #1e1e1e;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  flex-direction: column;
 }
 
 /* Slot Machine Container */
 .slot-machine-container {
-    background-color: #333;
-    padding: 20px;
-    border-radius: 15px;
-    border: 5px solid #f39c12;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-    width: 600px;
-    text-align: center;
-    position: relative;
+  background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+  padding: 30px;
+  border-radius: 20px;
+  border: 6px solid #f39c12;
+  box-shadow: 0 0 40px rgba(255, 165, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.2) inset;
+  width: 600px;
+  text-align: center;
+  position: relative;
 }
 
 /* Titel van het spel */
 h1 {
-    font-size: 3rem;
-    margin-bottom: 20px;
-    color: #f1c40f;
-    text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.5);
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #f1c40f;
+  text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.5);
 }
 
-/* Informatie en knoppen */
+/* Informatieblok */
 .info {
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  background: #111;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #444;
 }
 
-#points, #bet {
-    font-size: 1.5rem;
-    margin: 5px 0;
+#points,
+#bet {
+  font-size: 1.5rem;
+  margin: 5px 0;
 }
 
-/* Reels Container */
+/* Reels */
 .reels-container {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .reel {
-    width: 100px;
-    height: 100px;
-    background-color: #444;
-    border: 3px solid #f39c12;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    font-weight: bold;
+  width: 100px;
+  height: 100px;
+  background-color: #444;
+  border: 3px solid #f39c12;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: bold;
 }
 
-/* Knoppen voor inzetten en spinnen */
+/* Spin-animatie */
+.reel.spin-animation {
+  animation: spin 0.5s ease-in-out;
+}
+
+@keyframes spin {
+  0% { transform: rotateX(0); }
+  50% { transform: rotateX(90deg); opacity: 0.5; }
+  100% { transform: rotateX(0); opacity: 1; }
+}
+
+/* Controls / knoppen */
 .controls button {
-    background-color: #e67e22;
-    color: white;
-    padding: 15px 30px;
-    font-size: 1.5rem;
-    border: none;
-    cursor: pointer;
-    border-radius: 10px;
-    margin: 0 10px;
-    transition: background-color 0.3s;
+  background-color: #e67e22;
+  color: white;
+  padding: 15px 30px;
+  font-size: 1.5rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  margin: 0 10px;
+  transition: background-color 0.3s;
 }
 
 .controls button:hover {
-    background-color: #d35400;
+  background-color: #d35400;
 }
 
-/* Bericht weergave */
-#message {
-    font-size: 1.5rem;
-    color: #ff5733;
-    font-weight: bold;
-}
-
-/* Animatie voor de rollen */
-
-/* Styling van de knoppen */
 button:active {
-    transform: scale(0.95);
+  transform: scale(0.95);
 }
+
+button {
+  font-family: 'Arial', sans-serif;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3);
+}
+
+/* Berichtweergave */
+#message {
+  font-size: 1.5rem;
+  color: #ff5733;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+/* Wallet Interface */
 .wallet-interface {
   background: #222;
   padding: 10px;
@@ -105,14 +134,13 @@ button:active {
   font-family: monospace;
   font-size: 1rem;
 }
+
+/* Speciale knop voor demo-sol inzet */
 #bet-demo-sol {
-  background-color: #4CAF50; /* Groene kleur */
+  background-color: #4CAF50;
   border: none;
   color: white;
   padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
   font-size: 16px;
   margin: 10px 2px;
   cursor: pointer;
@@ -122,42 +150,8 @@ button:active {
 #bet-demo-sol:hover {
   background-color: #45a049;
 }
-.reel.spin-animation {
-  animation: spin 0.5s ease-in-out;
-}
 
-@keyframes spin {
-  0% { transform: rotateX(0); }
-  50% { transform: rotateX(90deg); opacity: 0.5; }
-  100% { transform: rotateX(0); opacity: 1; }
-}
-
-button {
-  font-family: 'Arial', sans-serif;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3);
-}
-.slot-machine-container {
-    background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
-    padding: 30px;
-    border-radius: 20px;
-    border: 6px solid #f39c12;
-    box-shadow: 0 0 40px rgba(255, 165, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.2) inset;
-}
-.info {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    background: #111;
-    padding: 10px;
-    border-radius: 10px;
-    border: 2px solid #444;
-}
+/* Responsive */
 @media (max-width: 768px) {
   .slot-machine-container {
     width: 90%;
@@ -174,4 +168,3 @@ button:hover {
     padding: 10px 20px;
   }
 }
-
