@@ -1,184 +1,97 @@
-/* General Reset and Body Styling */
+/* Basisinstellingen */
 body {
-  font-family: 'Arial', sans-serif;
-  background: #212121; /* Dark background for a real casino machine look */
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  flex-direction: column;
-  font-size: 16px;
-  overflow: hidden;
-  background-image: url('slot-bg.jpg'); /* Custom background image */
-  background-size: cover;
-  background-position: center;
-  box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    background: #1e1e1e;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column;
 }
 
-/* Slot Game Title */
-h1 {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  color: #f1c40f; /* Golden Yellow for text */
-  text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.5);
-  letter-spacing: 2px;
-  font-family: 'Roboto', sans-serif;
-}
-
-/* Message (win/lose/bonus notifications) */
-#message {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  font-weight: bold;
-  text-align: center;
-  color: #ff5733;
-  text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
-}
-
-/* Points Display */
-#points {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-  text-align: center;
-  font-family: 'Roboto', sans-serif;
-}
-
-/* Wager Controls */
-#wager-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-#wager-controls button {
-  background-color: #e67e22; /* Bright golden color */
-  color: white;
-  padding: 10px 25px;
-  font-size: 1.5rem;
-  border: none;
-  cursor: pointer;
-  border-radius: 10px;
-  margin: 0 10px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
-  font-family: 'Roboto', sans-serif;
-}
-
-#wager-controls button:hover {
-  background-color: #d35400;
-  transform: scale(1.1);
-}
-
-#wager-controls button:active {
-  transform: scale(0.98);
-}
-
-/* Slot Machine Container (Horizontal Layout) */
+/* Slot Machine Container */
 .slot-machine-container {
-  width: 800px;
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
-  border: 4px solid #f39c12;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-  position: relative;
-  background-color: rgba(0, 0, 0, 0.6);
-  padding: 20px;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 15px;
+    border: 5px solid #f39c12;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+    width: 600px;
+    text-align: center;
+    position: relative;
 }
 
-/* Reels Container (Horizontal layout for side-by-side reels) */
-.reels-container-horizontal {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 20px;
+/* Titel van het spel */
+h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #f1c40f;
+    text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.5);
+}
+
+/* Informatie en knoppen */
+.info {
+    margin-bottom: 20px;
+}
+
+#points, #bet {
+    font-size: 1.5rem;
+    margin: 5px 0;
+}
+
+/* Reels Container */
+.reels-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 .reel {
-  width: 120px;
-  height: 120px;
-  background-color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 3rem;
-  font-weight: bold;
-  border-radius: 10px;
-  border: 3px solid #f39c12;
-  background-image: url('reel-bg.jpg'); /* Custom background for reels */
-  background-size: cover;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.7);
+    width: 100px;
+    height: 100px;
+    background-color: #444;
+    border: 3px solid #f39c12;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
 }
 
-/* Spin Button */
-button {
-  background-color: #f39c12; /* Bright Yellow for Spin button */
-  color: white;
-  padding: 20px 40px;
-  font-size: 2rem;
-  border: none;
-  cursor: pointer;
-  border-radius: 15px;
-  margin-top: 20px;
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease, transform 0.3s ease;
+/* Knoppen voor inzetten en spinnen */
+.controls button {
+    background-color: #e67e22;
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    margin: 0 10px;
+    transition: background-color 0.3s;
 }
 
-button:hover {
-  background-color: #e67e22;
-  transform: scale(1.1);
+.controls button:hover {
+    background-color: #d35400;
 }
 
-button:disabled {
-  background-color: #bbb;
-  cursor: not-allowed;
+/* Bericht weergave */
+#message {
+    font-size: 1.5rem;
+    color: #ff5733;
+    font-weight: bold;
 }
 
-/* Glowing Neon Effect for Wilds */
-.reel-wild {
-  background-color: rgba(255, 165, 0, 0.7); /* Orange neon effect for wilds */
-  animation: wildGlow 1s ease-in-out infinite;
+/* Animatie voor de rollen */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-@keyframes wildGlow {
-  0% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(1); opacity: 0.8; }
-}
-
-/* Animation Effects for Winning Lines */
-.win-animation {
-  animation: neonGlow 1.5s ease-in-out infinite;
-}
-
-@keyframes neonGlow {
-  0% { text-shadow: 0 0 20px #ff5733, 0 0 30px #ff5733; }
-  50% { text-shadow: 0 0 20px #f1c40f, 0 0 30px #f1c40f; }
-  100% { text-shadow: 0 0 20px #ff5733, 0 0 30px #ff5733; }
-}
-
-/* Frame Borders */
-.slot-machine-frame {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: 4px solid #f39c12;
-  border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-}
-
-/* Custom Slot Machine Background */
-body {
-  background-color: #1c1c1c;
-  background-image: url('slot-machine-background.jpg');
-  background-size: cover;
-  background-position: center;
+/* Styling van de knoppen */
+button:active {
+    transform: scale(0.95);
 }
