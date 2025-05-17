@@ -6,21 +6,20 @@ const decreaseWagerBtn = document.getElementById('decreaseWager');
 const increaseWagerBtn = document.getElementById('increaseWager');
 const reelsContainer = document.querySelector('.reels-container');
 
-// Sound files
+// Sound files (ensure these files exist in your project directory)
 const spinSound = new Audio('spin-sound.mp3');
 const winSound = new Audio('win-sound.mp3');
 const loseSound = new Audio('lose-sound.mp3');
 const bonusSound = new Audio('bonus-sound.mp3');
 
-// Symbols
-const symbols = ['🍒', '🍋', '🍊', '🔔', '🍀', '💎', '7️⃣', '💰', '🌟']; // Added Wild symbol "🌟"
+// Symbols (including wild symbol 🌟)
+const symbols = ['🍒', '🍋', '🍊', '🔔', '🍀', '💎', '7️⃣', '💰', '🌟']; // Wild Symbol added
 
-// Initialize game state
 let points = 10000;
 let wager = 100;
-let wildSymbol = '🌟';  // Wild symbol
+let wildSymbol = '🌟';
 
-// Update points display
+// Update the points display
 function updatePoints() {
   pointsDisplay.textContent = `Points: ${points}`;
 }
@@ -36,12 +35,7 @@ function generateReels() {
   }
 }
 
-// Function to play sounds
-function playSound(sound) {
-  sound.play();
-}
-
-// Spin reels function
+// Spin the reels
 function spinReels() {
   wager = parseInt(wagerInput.value);
 
@@ -74,7 +68,7 @@ function spinReels() {
   }, 2000);
 }
 
-// Check win and bonus
+// Check win conditions
 function checkWin(reelSymbols) {
   const isWin = reelSymbols.every(symbol => symbol === reelSymbols[0]);
   const isWild = reelSymbols.includes(wildSymbol);
@@ -87,7 +81,7 @@ function checkWin(reelSymbols) {
     playSound(bonusSound);
     startBonusRound();
   } else if (isWin || isWild) {
-    const payout = isWild ? 3 : 1; // Wild symbol pays triple!
+    const payout = isWild ? 3 : 1;
     points += wager * payout;
     updatePoints();
     message.textContent = `You win! Payout: x${payout}`;
@@ -99,7 +93,7 @@ function checkWin(reelSymbols) {
   }
 }
 
-// Display win effects
+// Display visual effects on win
 function displayWinEffects() {
   document.body.style.background = 'linear-gradient(45deg, #f1c40f, #e67e22)';
   setTimeout(() => {
@@ -107,7 +101,7 @@ function displayWinEffects() {
   }, 1500);
 }
 
-// Bonus round function
+// Bonus round animation
 function startBonusRound() {
   setTimeout(() => {
     message.textContent = 'Bonus Round Over!';
@@ -120,7 +114,7 @@ function getRandomPayout() {
   return Math.floor(Math.random() * 5) + 1;
 }
 
-// Increase/Decrease wager buttons
+// Adjust wager
 decreaseWagerBtn.addEventListener('click', () => {
   wager = Math.max(1, wager - 100);
   wagerInput.value = wager;
@@ -131,7 +125,7 @@ increaseWagerBtn.addEventListener('click', () => {
   wagerInput.value = wager;
 });
 
-// Spin button
+// Spin button functionality
 spinBtn.addEventListener('click', spinReels);
 
 // Initialize the game
