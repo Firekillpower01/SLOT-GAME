@@ -2,18 +2,21 @@
 
 let bonusSpinsRemaining = 0;
 let isBonusGame = false;
+let jackpotTriggered = false;
 
 function startBonusGame() {
   bonusSpinsRemaining = 10;
   isBonusGame = true;
+  jackpotTriggered = false;
   showBonusPopup();
   updateBonusCounter();
+  setReelsToBonusMode();
 }
 
-function showBonusPopup() {
+function showBonusPopup(extra = false) {
   const popup = document.createElement('div');
   popup.id = 'bonus-popup';
-  popup.innerText = '🎰 BONUS GAME - 10 Gratis Spins!';
+  popup.innerText = extra ? '🎉 10 EXTRA BONUS SPINS!' : '🎰 BONUS GAME - 10 Gratis Spins!';
   popup.style.position = 'fixed';
   popup.style.top = '20px';
   popup.style.right = '20px';
@@ -45,35 +48,53 @@ function updateBonusCounter() {
   if (bonusSpinsRemaining <= 0) {
     counter.remove();
     isBonusGame = false;
+    resetReelsToNormal();
   }
 }
 
 function calculateWinnings(symbols, bet, elements) {
   let winnings = 0;
   let wildCount = 0;
-
   const isWinningLine = symbols.every((sym, _, arr) => sym === arr[0] || sym === '🃏');
-
   if (isWinningLine) {
     wildCount = symbols.filter(sym => sym === '🃏').length;
 
-    // Voeg wild effect toe
     symbols.forEach((sym, i) => {
       if (sym === '🃏') animateWildSymbol(elements[i]);
+      if (sym === '🃏') elements[i].innerText = '🔥WILD🔥';
     });
 
     let baseMultiplier = 10;
     let wildMultiplier = 1;
     if (wildCount === 1) wildMultiplier = 2;
     else if (wildCount === 2) wildMultiplier = 4;
-    else if (wildCount === 3) wildMultiplier = 10;
+    else if (wildCount === 3) {
+      wildMultiplier = 10;
+      if (isBonusGame) {
+        bonusSpinsRemaining += 10;
+        updateBonusCounter();
+        showBonusPopup(true);
+      }
+      if (!jackpotTriggered) jackpotCheck();
+    }
 
     if (isBonusGame) wildMultiplier *= 2;
-
     winnings = bet * baseMultiplier * wildMultiplier;
+    if (winnings >= bet * 10) showBigWinPopup(winnings);
   }
-
   return { winnings, wildCount };
+}
+
+function jackpotCheck() {
+  // logica voor dubbele 3 wilds triggeren (placeholder)
+  // bij echte implementatie tel je wild-lines per bonus game
+  jackpotTriggered = true;
+  const popup = document.createElement('div');
+  popup.className = 'big-win-popup';
+  popup.innerText = '🎉 JACKPOT! x500 GEWONNEN!';
+  popup.style.background = 'red';
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 5000);
 }
 
 function checkForBonus(symbols) {
@@ -133,17 +154,60 @@ function drawWinlines(lines) {
   }, 1500);
 }
 
+function showBigWinPopup(amount) {
+  const popup = document.createElement('div');
+  popup.className = 'big-win-popup';
+  popup.innerText = `💰 MEGA WIN: ${amount} punten!`;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 4000);
+}
+
+function setReelsToBonusMode() {
+  document.querySelectorAll('.reel').forEach(reel => {
+    reel.classList.add('bonus-mode');
+  });
+}
+
+function resetReelsToNormal() {
+  document.querySelectorAll('.reel').forEach(reel => {
+    reel.classList.remove('bonus-mode');
+  });
+}
+
 const style = document.createElement('style');
 style.innerHTML = `
   .wild-effect {
-    animation: flameSpark 1.2s ease-out;
+    animation: flameSpark 1.2s ease-out infinite alternate;
     position: relative;
-    z-index: 2;
+    color: red;
+    font-weight: bold;
   }
   @keyframes flameSpark {
-    0% { box-shadow: 0 0 5px red; transform: scale(1); }
-    50% { box-shadow: 0 0 20px orange, 0 0 30px yellow; transform: scale(1.1); }
-    100% { box-shadow: 0 0 5px red; transform: scale(1); }
+    0% { text-shadow: 0 0 5px red; transform: scale(1); }
+    50% { text-shadow: 0 0 20px orange, 0 0 30px yellow; transform: scale(1.2); }
+    100% { text-shadow: 0 0 5px red; transform: scale(1); }
+  }
+  .big-win-popup {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: gold;
+    padding: 20px 40px;
+    font-size: 28px;
+    font-weight: bold;
+    border: 4px solid #000;
+    border-radius: 12px;
+    z-index: 1001;
+    animation: popupScale 0.6s ease-out;
+  }
+  @keyframes popupScale {
+    0% { transform: scale(0.5) translate(-50%, -50%); }
+    100% { transform: scale(1) translate(-50%, -50%); }
+  }
+  .reel.bonus-mode {
+    border: 2px solid #f0f;
+    background: rgba(255, 255, 0, 0.1);
   }
 `;
 document.head.appendChild(style);
