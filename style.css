@@ -1,3 +1,17 @@
+.wallet-interface {
+  background: #222;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  color: #0f0;
+}
+
+#wallet-status,
+#crypto-balance {
+  margin-top: 10px;
+  font-family: monospace;
+  font-size: 1rem;
+}
 /* Basisinstellingen */
 body {
     font-family: 'Arial', sans-serif;
