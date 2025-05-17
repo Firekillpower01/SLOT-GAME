@@ -1,83 +1,63 @@
-// Variables
 let points = 10000;
-let currentBet = 100;
-let symbols = ['🍒', '🍋', '🍊', '🍉', '7️⃣', '🍀'];
-let reel1, reel2, reel3;
-let isSpinning = false;
+let currentBet = 10;
 
-// Initialize Reels and Controls
-window.onload = function () {
-    reel1 = document.getElementById('reel1');
-    reel2 = document.getElementById('reel2');
-    reel3 = document.getElementById('reel3');
-    
-    updateDisplay();
+const pointsDisplay = document.getElementById('points');
+const betDisplay = document.getElementById('bet');
+const messageDisplay = document.getElementById('message');
+const reel1 = document.getElementById('reel1');
+const reel2 = document.getElementById('reel2');
+const reel3 = document.getElementById('reel3');
 
-    document.getElementById('spin-button').addEventListener('click', spin);
-    document.getElementById('increase-bet').addEventListener('click', increaseBet);
-    document.getElementById('decrease-bet').addEventListener('click', decreaseBet);
-};
+document.getElementById('increase-bet').addEventListener('click', () => {
+    if (points >= currentBet + 10) {
+        currentBet += 10;
+        betDisplay.innerText = `Inzet: ${currentBet}`;
+    } else {
+        messageDisplay.innerText = "Niet genoeg punten voor deze inzet!";
+    }
+});
 
-// Update Points Display
-function updateDisplay() {
-    document.getElementById('points').innerText = `Points: ${points}`;
-    document.getElementById('message').innerText = `Bet: ${currentBet} Points`;
-}
+document.getElementById('decrease-bet').addEventListener('click', () => {
+    if (currentBet > 10) {
+        currentBet -= 10;
+        betDisplay.innerText = `Inzet: ${currentBet}`;
+    }
+});
 
-// Spin the Reels
-function spin() {
-    if (isSpinning || points < currentBet) {
+document.getElementById('spin-button').addEventListener('click', () => {
+    if (points < currentBet) {
+        messageDisplay.innerText = "Je hebt niet genoeg punten om te spelen!";
         return;
     }
-
-    // Deduct the bet
-    points -= currentBet;
-    updateDisplay();
-
-    // Start spinning
-    isSpinning = true;
-    document.getElementById('spin-button').disabled = true;
     
-    let spin1 = Math.floor(Math.random() * symbols.length);
-    let spin2 = Math.floor(Math.random() * symbols.length);
-    let spin3 = Math.floor(Math.random() * symbols.length);
+    // Verminder punten op basis van de inzet
+    points -= currentBet;
+    pointsDisplay.innerText = `Points: ${points}`;
 
-    reel1.innerText = symbols[spin1];
-    reel2.innerText = symbols[spin2];
-    reel3.innerText = symbols[spin3];
+    // Simuleer het draaien van de rollen
+    messageDisplay.innerText = "Draaiende rollen...";
 
-    // Simulate reel spinning with delay
+    const reelValues = ['🍒', '🍋', '🍊', '🍉', '💎', '⭐', '7️⃣'];
+
+    function spinReel(reel) {
+        const randomSymbol = reelValues[Math.floor(Math.random() * reelValues.length)];
+        reel.innerText = randomSymbol;
+    }
+
+    spinReel(reel1);
+    spinReel(reel2);
+    spinReel(reel3);
+
+    // Simuleer een resultaat en bepaal de uitbetaling
     setTimeout(() => {
-        checkWin(spin1, spin2, spin3);
-        isSpinning = false;
-        document.getElementById('spin-button').disabled = false;
+        const result = [reel1.innerText, reel2.innerText, reel3.innerText];
+        if (result[0] === result[1] && result[1] === result[2]) {
+            let winnings = currentBet * 10; // 10x uitbetaling voor drie dezelfde symbolen
+            points += winnings;
+            pointsDisplay.innerText = `Points: ${points}`;
+            messageDisplay.innerText = `Je hebt gewonnen! ${winnings} punten!`;
+        } else {
+            messageDisplay.innerText = "Helaas, probeer het opnieuw!";
+        }
     }, 1000);
-}
-
-// Check Win Condition
-function checkWin(symbol1, symbol2, symbol3) {
-    if (symbol1 === symbol2 && symbol2 === symbol3) {
-        points += currentBet * 10; // Payout multiplier for matching symbols
-        document.getElementById('message').innerText = `You Win! Payout: ${currentBet * 10} Points!`;
-    } else {
-        document.getElementById('message').innerText = "Try Again!";
-    }
-
-    updateDisplay();
-}
-
-// Increase Bet Amount
-function increaseBet() {
-    if (points >= currentBet + 100) {
-        currentBet += 100;
-        updateDisplay();
-    }
-}
-
-// Decrease Bet Amount
-function decreaseBet() {
-    if (currentBet > 100) {
-        currentBet -= 100;
-        updateDisplay();
-    }
-}
+});
