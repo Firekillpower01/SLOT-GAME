@@ -2,55 +2,62 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PUMP RAIDERS</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.73.3/lib/index.iife.min.js"></script>
 </head>
 <body>
+
+  <!-- Wallet connectie -->
   <div class="wallet-interface">
     <button id="connect-wallet">🔗 Verbind Phantom Wallet</button>
     <div id="wallet-status">Niet verbonden</div>
     <div id="crypto-balance">Demo Balance: 1.000 SOL</div>
   </div>
 
-  <h1 class="title">PUMP RAIDERS 🎰</h1>
+  <!-- Game titel -->
+  <h1 class="game-title">🎰 PUMP RAIDERS 🎰</h1>
 
+  <!-- Geluid aan/uit knop -->
+  <div id="sound-toggle" class="sound-toggle">🔊</div>
+
+  <!-- Bonus counter -->
+  <div id="bonus-counter" style="display: none;"></div>
+
+  <!-- Slot machine container -->
   <div class="slot-machine-container">
-    <div class="reels">
-      <div class="row">
-        <div class="reel" id="reel-0-0"></div>
-        <div class="reel" id="reel-0-1"></div>
-        <div class="reel" id="reel-0-2"></div>
-      </div>
-      <div class="row">
-        <div class="reel" id="reel-1-0"></div>
-        <div class="reel" id="reel-1-1"></div>
-        <div class="reel" id="reel-1-2"></div>
-      </div>
-      <div class="row">
-        <div class="reel" id="reel-2-0"></div>
-        <div class="reel" id="reel-2-1"></div>
-        <div class="reel" id="reel-2-2"></div>
-      </div>
+    <!-- Rollen -->
+    <div class="reels-grid" id="reels-grid">
+      <!-- Dynamisch gevuld via JS -->
     </div>
+
+    <!-- Info over punten en inzet -->
+    <div class="info-bar">
+      <div id="points">Points: 10000</div>
+      <div id="bet">Inzet: 100</div>
+    </div>
+
+    <!-- Besturingsknoppen -->
+    <div class="controls">
+      <button id="decrease-bet">-</button>
+      <button id="increase-bet">+</button>
+      <button id="spin-button">Spin</button>
+      <button id="bet-demo-sol">Inzet 0.01 SOL</button>
+    </div>
+
+    <!-- Feedback of meldingen -->
+    <div id="message">Druk op Spin om te starten!</div>
   </div>
 
-  <div class="info-panel">
-    <div id="points">Points: 10000</div>
-    <div id="bet">Inzet: 100</div>
-  </div>
+  <!-- Geluidseffecten -->
+  <audio id="spin-sound" src="sounds/spin.mp3" preload="auto"></audio>
+  <audio id="win-sound" src="sounds/win.mp3" preload="auto"></audio>
+  <audio id="lose-sound" src="sounds/lose.mp3" preload="auto"></audio>
+  <audio id="bonus-sound" src="sounds/bonus.mp3" preload="auto"></audio>
+  <audio id="jackpot-sound" src="sounds/jackpot.mp3" preload="auto"></audio>
 
-  <div class="controls">
-    <button id="decrease-bet">➖</button>
-    <button id="increase-bet">➕</button>
-    <button id="spin-button">Spin 🎯</button>
-    <button id="bet-demo-sol">Spin 0.01 SOL 💰</button>
-    <button id="sound-toggle">🔊</button>
-  </div>
-
-  <div id="message">Spin en Win!</div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.73.3/lib/index.iife.min.js"></script>
+  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>
