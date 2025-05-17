@@ -76,10 +76,10 @@ h1 {
   transform: scale(0.98);
 }
 
-/* Slot Machine Container */
+/* Slot Machine Container (Horizontal Layout) */
 .slot-machine-container {
-  width: 600px;
-  height: 500px;
+  width: 800px;
+  height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -92,18 +92,17 @@ h1 {
   padding: 20px;
 }
 
-/* Reels Container */
-.reels-container {
+/* Reels Container (Horizontal layout for side-by-side reels) */
+.reels-container-horizontal {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  position: relative;
-  z-index: 10;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
 .reel {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   background-color: #333;
   display: flex;
   justify-content: center;
