@@ -1,170 +1,159 @@
-/* Basisinstellingen */
+/* Algemene instellingen */
 body {
-  font-family: 'Arial', sans-serif;
-  background: #1e1e1e;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  flex-direction: column;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
 }
 
-/* Slot Machine Container */
+/* Container van de gokkast */
 .slot-machine-container {
-  background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
-  padding: 30px;
-  border-radius: 20px;
-  border: 6px solid #f39c12;
-  box-shadow: 0 0 40px rgba(255, 165, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.2) inset;
-  width: 600px;
-  text-align: center;
-  position: relative;
+    background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+    padding: 30px;
+    border-radius: 20px;
+    border: 6px solid #f39c12;
+    box-shadow: 0 0 40px rgba(255, 165, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.2) inset;
+    width: 700px;
+    max-width: 95%;
+    text-align: center;
+    position: relative;
 }
 
-/* Titel van het spel */
+/* Titel */
 h1 {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  color: #f1c40f;
-  text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.5);
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #f1c40f;
+    text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.5);
 }
 
-/* Informatieblok */
+/* Info-display */
 .info {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-  background: #111;
-  padding: 10px;
-  border-radius: 10px;
-  border: 2px solid #444;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    background: #111;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #444;
 }
 
-#points,
-#bet {
-  font-size: 1.5rem;
-  margin: 5px 0;
+#points, #bet, #wallet-status, #crypto-balance {
+    font-size: 1.3rem;
+    margin: 5px 10px;
+    font-family: monospace;
 }
 
-/* Reels */
+/* Rollen container */
 .reels-container {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px 0;
 }
 
 .reel {
-  width: 100px;
-  height: 100px;
-  background-color: #444;
-  border: 3px solid #f39c12;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  font-weight: bold;
+    width: 120px;
+    height: 120px;
+    background-color: #444;
+    border: 3px solid #f39c12;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.5);
+    transition: transform 0.3s ease-in-out;
 }
 
 /* Spin-animatie */
 .reel.spin-animation {
-  animation: spin 0.5s ease-in-out;
+    animation: spin 0.5s ease-in-out;
 }
 
 @keyframes spin {
-  0% { transform: rotateX(0); }
-  50% { transform: rotateX(90deg); opacity: 0.5; }
-  100% { transform: rotateX(0); opacity: 1; }
+    0% { transform: rotateX(0); }
+    50% { transform: rotateX(90deg) scale(1.1); opacity: 0.6; }
+    100% { transform: rotateX(0); opacity: 1; }
 }
 
-/* Controls / knoppen */
-.controls button {
-  background-color: #e67e22;
-  color: white;
-  padding: 15px 30px;
-  font-size: 1.5rem;
-  border: none;
-  cursor: pointer;
-  border-radius: 10px;
-  margin: 0 10px;
-  transition: background-color 0.3s;
+/* Knoppen */
+.controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-.controls button:hover {
-  background-color: #d35400;
+.controls button, #bet-demo-sol, #connect-wallet {
+    background-color: #e67e22;
+    color: white;
+    padding: 12px 25px;
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-family: 'Arial', sans-serif;
 }
 
-button:active {
-  transform: scale(0.95);
+.controls button:hover, #bet-demo-sol:hover, #connect-wallet:hover {
+    background-color: #d35400;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(255, 140, 0, 0.6);
 }
 
-button {
-  font-family: 'Arial', sans-serif;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3);
-}
-
-/* Berichtweergave */
-#message {
-  font-size: 1.5rem;
-  color: #ff5733;
-  font-weight: bold;
-  margin-top: 15px;
-}
-
-/* Wallet Interface */
-.wallet-interface {
-  background: #222;
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  color: #0f0;
-}
-
-#wallet-status,
-#crypto-balance {
-  margin-top: 10px;
-  font-family: monospace;
-  font-size: 1rem;
-}
-
-/* Speciale knop voor demo-sol inzet */
+/* Demo SOL knop */
 #bet-demo-sol {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  margin: 10px 2px;
-  cursor: pointer;
-  border-radius: 5px;
+    background-color: #4CAF50;
 }
 
 #bet-demo-sol:hover {
-  background-color: #45a049;
+    background-color: #45a049;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .slot-machine-container {
-    width: 90%;
-  }
+/* Wallet UI */
+.wallet-interface {
+    background: #222;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    color: #0f0;
+    font-family: monospace;
+}
 
-  .reel {
-    width: 80px;
-    height: 80px;
+/* Bericht display */
+#message {
     font-size: 1.5rem;
-  }
+    color: #ff5733;
+    font-weight: bold;
+    margin-top: 15px;
+}
 
-  .controls button {
-    font-size: 1rem;
-    padding: 10px 20px;
-  }
+/* Responsive styling */
+@media (max-width: 768px) {
+    .reel {
+        width: 80px;
+        height: 80px;
+        font-size: 1.5rem;
+    }
+
+    .controls button, #bet-demo-sol, #connect-wallet {
+        font-size: 1rem;
+        padding: 10px 20px;
+    }
+
+    .slot-machine-container {
+        width: 95%;
+        padding: 20px;
+    }
 }
