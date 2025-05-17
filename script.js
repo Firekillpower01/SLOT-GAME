@@ -72,7 +72,8 @@ if (connectWalletButton) {
 }
 
 // Inzet aanpassen
-document.getElementById('increase-bet').addEventListener('click', () => {
+const increaseBetBtn = document.getElementById('increase-bet');
+increaseBetBtn.addEventListener('click', () => {
   if (points >= currentBet + 10) {
     currentBet += 10;
     betDisplay.innerText = `Inzet: ${currentBet}`;
@@ -81,7 +82,8 @@ document.getElementById('increase-bet').addEventListener('click', () => {
   }
 });
 
-document.getElementById('decrease-bet').addEventListener('click', () => {
+const decreaseBetBtn = document.getElementById('decrease-bet');
+decreaseBetBtn.addEventListener('click', () => {
   if (currentBet > 10) {
     currentBet -= 10;
     betDisplay.innerText = `Inzet: ${currentBet}`;
@@ -89,8 +91,11 @@ document.getElementById('decrease-bet').addEventListener('click', () => {
 });
 
 // Spin knoppen
-document.getElementById('spin-button').addEventListener('click', handlePointSpin);
-document.getElementById('bet-demo-sol').addEventListener('click', handleSolSpin);
+const spinButton = document.getElementById('spin-button');
+const solSpinButton = document.getElementById('bet-demo-sol');
+
+spinButton.addEventListener('click', handlePointSpin);
+solSpinButton.addEventListener('click', handleSolSpin);
 
 function handlePointSpin() {
   if (points < currentBet) {
@@ -152,32 +157,98 @@ function checkWinline(mode) {
   ];
 
   const values = reels.map(r => r.textContent);
-  let won = false;
+  let totalWinnings = 0;
+  let winningLines = [];
 
-  reels.forEach(r => r.classList.remove('winline'));
+  reels.forEach(r => {
+    r.classList.remove('winline');
+    r.classList.remove('flash');
+    const existingOverlay = r.querySelector('.win-amount');
+    if (existingOverlay) r.removeChild(existingOverlay);
+  });
+
+  const overlayLines = [];
 
   for (let line of winlines) {
     if (values[line[0]] === values[line[1]] && values[line[1]] === values[line[2]]) {
-      won = true;
-      line.forEach(index => reels[index].classList.add('winline'));
-      break;
+      winningLines.push(line);
     }
   }
 
-  if (won) {
-    const winnings = currentBet * 10;
+  if (winningLines.length > 0) {
+    const winnings = currentBet * 10 * winningLines.length;
+    totalWinnings += winnings;
+
+    winningLines.forEach(line => {
+      const coords = [];
+      line.forEach(index => {
+        reels[index].classList.add('winline');
+        reels[index].classList.add('flash');
+        const winAmountTag = document.createElement('div');
+        winAmountTag.className = 'win-amount';
+        winAmountTag.textContent = `+${currentBet * 10}`;
+        reels[index].appendChild(winAmountTag);
+
+        const rect = reels[index].getBoundingClientRect();
+        coords.push({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
+      });
+      overlayLines.push(coords);
+    });
+
     if (mode === 'points') {
-      points += winnings;
+      points += totalWinnings;
       pointsDisplay.textContent = `Points: ${points}`;
-      messageDisplay.textContent = `🎉 Gewonnen! ${winnings} punten!`;
     }
+
+    messageDisplay.textContent = `🎉 Gewonnen! ${totalWinnings} punten!`;
     if (soundEnabled) winSound.play();
+
+    drawWinlines(overlayLines);
+
+    if (totalWinnings >= currentBet * 10 * 2) {
+      setTimeout(() => {
+        alert(`🔥 Grote winst! Je won ${totalWinnings} punten!`);
+      }, 700);
+    }
   } else {
     if (mode === 'points') {
       messageDisplay.textContent = "Helaas, probeer opnieuw.";
     }
     if (soundEnabled) loseSound.play();
   }
+}
+
+function drawWinlines(lines) {
+  const existingCanvas = document.getElementById('winlines-canvas');
+  if (existingCanvas) existingCanvas.remove();
+
+  const canvas = document.createElement('canvas');
+  canvas.id = 'winlines-canvas';
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.width = '100vw';
+  canvas.style.height = '100vh';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = '999';
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  ctx.strokeStyle = 'gold';
+  ctx.lineWidth = 3;
+
+  lines.forEach(coords => {
+    ctx.beginPath();
+    coords.forEach((pt, index) => {
+      if (index === 0) ctx.moveTo(pt.x, pt.y);
+      else ctx.lineTo(pt.x, pt.y);
+    });
+    ctx.stroke();
+  });
+
+  setTimeout(() => canvas.remove(), 1200);
 }
 
 function updateCryptoBalance() {
