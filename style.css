@@ -88,3 +88,12 @@ h1 {
   margin-top: 15px;
   min-height: 30px;
 }
+.winline {
+  animation: flash 0.5s alternate 4;
+}
+
+@keyframes flash {
+  from { transform: scale(1); background-color: transparent; }
+  to { transform: scale(1.2); background-color: gold; }
+}
+
