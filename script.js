@@ -27,6 +27,25 @@ document.getElementById('connect-wallet').addEventListener('click', connectWalle
 function updateCryptoBalance() {
   cryptoBalance.textContent = `Demo Balance: ${demoSolBalance.toFixed(3)} SOL`;
 }
+document.getElementById('bet-demo-sol').addEventListener('click', () => {
+  if (!walletAddress) {
+    messageDisplay.textContent = "Verbind eerst je wallet om te spelen!";
+    return;
+  }
+
+  if (demoSolBalance < 0.01) {
+    messageDisplay.textContent = "Niet genoeg demo SOL! Verhoog je saldo.";
+    return;
+  }
+
+  demoSolBalance -= 0.01;
+  updateCryptoBalance();
+
+  // Simuleer de spin
+  spinReels();
+  messageDisplay.textContent = "Je hebt 0.01 SOL ingezet!";
+});
+
 
 let points = 10000;
 let currentBet = 10;
