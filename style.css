@@ -1,19 +1,36 @@
-/* Slot Game Styles */
+/* Slot Game Styles - Geoptimaliseerde Versie */
+:root {
+  --gold: #ffd700;
+  --dark-blue: #1a1a2e;
+  --deep-blue: #16213e;
+  --wild-red: red;
+  --wild-glow: orange;
+  --bonus-border: magenta;
+  --bonus-bg: rgba(255, 255, 0, 0.1);
+  --btn-bg: #ffcc00;
+  --btn-hover: #ffaa00;
+  --green: #00ff00;
+  --text-light: #fff;
+  --popup-bg: gold;
+  --popup-border: #000;
+}
+
 body {
-  background: linear-gradient(to bottom right, #1a1a2e, #16213e);
+  background: linear-gradient(to bottom right, var(--dark-blue), var(--deep-blue));
   font-family: 'Arial', sans-serif;
-  color: white;
+  color: var(--text-light);
   text-align: center;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 h1 {
   margin-top: 20px;
   font-size: 2.5em;
-  color: #ffd700;
+  color: var(--gold);
 }
 
+/* Reels */
 #game {
   margin: 30px auto;
   display: grid;
@@ -34,6 +51,13 @@ h1 {
   transition: transform 0.2s ease;
 }
 
+/* Bonus Mode Reel Styling */
+.reel.bonus-mode {
+  background: var(--bonus-bg);
+  border: 2px solid var(--bonus-border);
+}
+
+/* Controls */
 .controls {
   margin: 20px;
 }
@@ -44,62 +68,110 @@ button {
   border: none;
   border-radius: 5px;
   margin: 5px;
-  background-color: #ffcc00;
+  background-color: var(--btn-bg);
   color: #000;
   cursor: pointer;
   font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 button:hover {
-  background-color: #ffaa00;
+  background-color: var(--btn-hover);
 }
 
+button:active {
+  transform: scale(0.95);
+}
+
+/* Wallet status */
 #wallet-status {
   margin-top: 10px;
   font-weight: bold;
-  color: #00ff00;
+  color: var(--green);
 }
 
+/* Bonus Counter */
 #bonus-counter {
   font-size: 1.2em;
   font-weight: bold;
-  color: #fff;
+  color: var(--text-light);
 }
 
-.reel.bonus-mode {
-  background: rgba(255, 255, 0, 0.1);
-  border: 2px solid magenta;
-}
-
-.big-win-popup {
-  position: fixed;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: gold;
-  padding: 20px 40px;
-  font-size: 28px;
-  font-weight: bold;
-  border: 4px solid #000;
-  border-radius: 12px;
-  z-index: 1001;
-  animation: popupScale 0.6s ease-out;
-}
-
-@keyframes popupScale {
-  0% { transform: scale(0.5) translate(-50%, -50%); }
-  100% { transform: scale(1) translate(-50%, -50%); }
-}
-
+/* Wild effect animation */
 .wild-effect {
   animation: flameSpark 1.2s ease-out infinite alternate;
   position: relative;
-  color: red;
+  color: var(--wild-red);
   font-weight: bold;
 }
 
 @keyframes flameSpark {
-  0% { text-shadow: 0 0 5px red; transform: scale(1); }
-  50% { text-shadow: 0 0 20px orange, 0 0 30px yellow; transform: scale(1.2); }
-  100% { text-shadow: 0 0 5px red; transform: scale(1); }
+  0% {
+    text-shadow: 0 0 5px var(--wild-red);
+    transform: scale(1);
+  }
+  50% {
+    text-shadow: 0 0 20px var(--wild-glow), 0 0 30px yellow;
+    transform: scale(1.2);
+  }
+  100% {
+    text-shadow: 0 0 5px var(--wild-red);
+    transform: scale(1);
+  }
+}
+
+/* Big win / Jackpot popup */
+.big-win-popup,
+#bonus-popup {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--popup-bg);
+  padding: 20px 40px;
+  font-size: 28px;
+  font-weight: bold;
+  border: 4px solid var(--popup-border);
+  border-radius: 12px;
+  z-index: 1001;
+  animation: popupScale 0.6s ease-out;
+  transition: opacity 0.5s ease-out;
+  opacity: 1;
+}
+
+.big-win-popup.fade-out,
+#bonus-popup.fade-out {
+  opacity: 0;
+}
+
+@keyframes popupScale {
+  0% {
+    transform: scale(0.5) translate(-50%, -50%);
+  }
+  100% {
+    transform: scale(1) translate(-50%, -50%);
+  }
+}
+
+/* Responsive voor mobiel */
+@media (max-width: 500px) {
+  #game {
+    grid-template-columns: repeat(3, 70px);
+    grid-template-rows: repeat(3, 70px);
+  }
+
+  .reel {
+    font-size: 1.5em;
+  }
+
+  button {
+    font-size: 0.9em;
+    padding: 8px 16px;
+  }
+
+  .big-win-popup,
+  #bonus-popup {
+    font-size: 22px;
+    padding: 16px 30px;
+  }
 }
