@@ -1,56 +1,55 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PUMP RAIDERS</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <!-- Wallet Connectie -->
   <div class="wallet-interface">
     <button id="connect-wallet">🔗 Verbind Phantom Wallet</button>
     <div id="wallet-status">Niet verbonden</div>
     <div id="crypto-balance">Demo Balance: 1.000 SOL</div>
   </div>
 
-  <!-- Slot Machine -->
+  <h1 class="title">PUMP RAIDERS 🎰</h1>
+
   <div class="slot-machine-container">
-    <h1>PUMP RAIDERS</h1>
-
-    <!-- Reels 3x3 -->
-    <div class="reels-grid">
-      <div class="reel" id="r0">🍒</div>
-      <div class="reel" id="r1">🍋</div>
-      <div class="reel" id="r2">🍊</div>
-      <div class="reel" id="r3">🍇</div>
-      <div class="reel" id="r4">💎</div>
-      <div class="reel" id="r5">🍌</div>
-      <div class="reel" id="r6">⭐</div>
-      <div class="reel" id="r7">7️⃣</div>
-      <div class="reel" id="r8">🍉</div>
+    <div class="reels">
+      <div class="row">
+        <div class="reel" id="reel-0-0"></div>
+        <div class="reel" id="reel-0-1"></div>
+        <div class="reel" id="reel-0-2"></div>
+      </div>
+      <div class="row">
+        <div class="reel" id="reel-1-0"></div>
+        <div class="reel" id="reel-1-1"></div>
+        <div class="reel" id="reel-1-2"></div>
+      </div>
+      <div class="row">
+        <div class="reel" id="reel-2-0"></div>
+        <div class="reel" id="reel-2-1"></div>
+        <div class="reel" id="reel-2-2"></div>
+      </div>
     </div>
-
-    <!-- Puntensaldo en inzet -->
-    <div class="info">
-      <div id="points">Points: 10000</div>
-      <div id="bet">Inzet: 100</div>
-    </div>
-
-    <!-- Controle knoppen -->
-    <div class="controls">
-      <button id="decrease-bet">-</button>
-      <button id="increase-bet">+</button>
-      <button id="spin-button">🎰 Spin met punten</button>
-      <button id="bet-demo-sol">💰 Spin met 0.01 SOL</button>
-    </div>
-
-    <!-- Resultaat -->
-    <div id="message">Spin en Win!</div>
   </div>
 
-  <!-- JS -->
+  <div class="info-panel">
+    <div id="points">Points: 10000</div>
+    <div id="bet">Inzet: 100</div>
+  </div>
+
+  <div class="controls">
+    <button id="decrease-bet">➖</button>
+    <button id="increase-bet">➕</button>
+    <button id="spin-button">Spin 🎯</button>
+    <button id="bet-demo-sol">Spin 0.01 SOL 💰</button>
+    <button id="sound-toggle">🔊</button>
+  </div>
+
+  <div id="message">Spin en Win!</div>
+
   <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.73.3/lib/index.iife.min.js"></script>
   <script src="script.js"></script>
 </body>
