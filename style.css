@@ -126,5 +126,14 @@ button:active {
 #bet-demo-sol:hover {
   background-color: #45a049;
 }
+.reel.spin-animation {
+  animation: spin 0.5s ease-in-out;
+}
+
+@keyframes spin {
+  0% { transform: rotateX(0); }
+  50% { transform: rotateX(90deg); opacity: 0.5; }
+  100% { transform: rotateX(0); opacity: 1; }
+}
 
 
