@@ -195,3 +195,30 @@ document.getElementById('bet-demo-sol').addEventListener('click', () => {
   messageDisplay.textContent = "Je hebt 0.01 SOL ingezet!";
 });
 
+function spinReels()
+  }
+function showResultMessage(winAmount) {
+  const messageDisplay = document.getElementById('message-display');
+  if (winAmount > 0) {
+    messageDisplay.textContent = `🎉 Je hebt ${winAmount.toFixed(2)} SOL gewonnen!`;
+  } else {
+    messageDisplay.textContent = `❌ Geen winst deze ronde. Probeer opnieuw!`;
+  }
+  let winst = Math.random() < 0.3 ? 0.03 : 0;
+demoSolBalance += winst;
+updateCryptoBalance();
+showResultMessage(winst);
+
+  {
+  const reels = document.querySelectorAll('.reel');
+
+  reels.forEach((reel) => {
+    reel.classList.add('spin-animation');
+    setTimeout(() => {
+      reel.classList.remove('spin-animation');
+    }, 500);
+  });
+
+  // Voeg hier je bestaande spin-logica toe (zoals symbolen randomiseren)
+
+}
