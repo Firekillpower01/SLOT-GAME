@@ -231,3 +231,67 @@ style.innerHTML = `
   }
 `;
 document.head.appendChild(style);
+let points = 1000;
+let bet = 10;
+
+const gameContainer = document.getElementById('game');
+const spinButton = document.getElementById('spin');
+const pointsDisplay = document.getElementById('points');
+const betDisplay = document.getElementById('bet');
+
+document.getElementById('bet-plus').addEventListener('click', () => {
+  if (bet + 10 <= points) {
+    bet += 10;
+    betDisplay.innerText = bet;
+  }
+});
+
+document.getElementById('bet-minus').addEventListener('click', () => {
+  if (bet > 10) {
+    bet -= 10;
+    betDisplay.innerText = bet;
+  }
+});
+
+function updatePoints(amount) {
+  points += amount;
+  pointsDisplay.innerText = points;
+}
+
+function createReels(symbolMatrix) {
+  gameContainer.innerHTML = '';
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
+      const cell = document.createElement('div');
+      cell.className = 'reel';
+      cell.innerText = symbolMatrix[row][col];
+      gameContainer.appendChild(cell);
+    }
+  }
+}
+
+spinButton.addEventListener('click', () => {
+  if (!walletConnected) {
+    alert('Verbind eerst je wallet!');
+    return;
+  }
+  if (points < bet) {
+    alert('Niet genoeg punten!');
+    return;
+  }
+
+  updatePoints(-bet);
+  const symbols = generateRandomSymbols();
+  createReels(symbols);
+
+  // Simuleer een winst op de middelste lijn
+  const middleLine = symbols[1];
+  const middleElements = Array.from(document.getElementsByClassName('reel')).slice(3, 6);
+  const { winnings } = calculateWinnings(middleLine, bet, middleElements);
+
+  if (winnings > 0) {
+    updatePoints(winnings);
+  }
+
+  checkForBonus(middleLine);
+});
