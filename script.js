@@ -38,6 +38,24 @@ const reel1 = document.getElementById('reel1');
 const reel2 = document.getElementById('reel2');
 const reel3 = document.getElementById('reel3');
 
+document.getElementById('spin-button').addEventListener('click', () => {
+  if (!walletAddress) {
+    messageDisplay.textContent = "Verbind eerst je wallet om te spinnen!";
+    return;
+  }
+
+  if (demoSolBalance < spinCost) {
+    messageDisplay.textContent = "Niet genoeg SOL (demo)! Verhoog je demo balance.";
+    return;
+  }
+
+  demoSolBalance -= spinCost;
+  updateCryptoBalance();
+
+  // ... jouw bestaande spin logica hieronder
+});
+
+
 // Verhoog de inzet
 document.getElementById('increase-bet').addEventListener('click', () => {
     if (points >= currentBet + 10) {
