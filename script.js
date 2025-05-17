@@ -1,53 +1,103 @@
 let walletConnected = false;
+let points = 1000;
+let bonusSpinsRemaining = 0;
+let isBonusGame = false;
+let jackpotTriggered = false;
 
 document.getElementById('connect-wallet').addEventListener('click', () => {
   walletConnected = true;
   document.getElementById('wallet-status').innerText = 'Wallet Verbonden ✅';
 });
 
-function generateRandomSymbols() {
-  const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '🃏']; // '🃏' is wild
-  const result = [];
-  for (let row = 0; row < 3; row++) {
-    const reelRow = [];
-    for (let col = 0; col < 3; col++) {
-      const randIndex = Math.floor(Math.random() * symbols.length);
-      reelRow.push(symbols[randIndex]);
-    }
-    result.push(reelRow);
-  }
-  return result;
-}
-// ... (bestaande code blijft gelijk)
+const gameBoard = document.getElementById('game');
+const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '🃏']; // 🃏 is wild
 
-let bonusSpinsRemaining = 0;
-let isBonusGame = false;
-let jackpotTriggered = false;
+function createBoard() {
+  gameBoard.innerHTML = '';
+  for (let i = 0; i < 9; i++) {
+    const reel = document.createElement('div');
+    reel.className = 'reel';
+    reel.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+    gameBoard.appendChild(reel);
+  }
+}
+
+function generateRandomSymbols() {
+  const reels = [];
+  for (let i = 0; i < 9; i++) {
+    reels.push(symbols[Math.floor(Math.random() * symbols.length)]);
+  }
+  return reels;
+}
+
+function updateBoard(reels) {
+  const elements = document.querySelectorAll('.reel');
+  elements.forEach((el, i) => {
+    el.innerText = reels[i];
+    el.classList.remove('wild-effect');
+  });
+}
+
+function checkLines(reels) {
+  const winLines = [
+    [0,1,2],[3,4,5],[6,7,8], // rows
+    [0,3,6],[1,4,7],[2,5,8], // cols
+    [0,4,8],[2,4,6]          // diagonals
+  ];
+  let totalWin = 0;
+
+  for (const line of winLines) {
+    const lineSymbols = line.map(i => reels[i]);
+    const wilds = lineSymbols.filter(s => s === '🃏').length;
+    const baseSymbol = lineSymbols.find(s => s !== '🃏');
+
+    if (lineSymbols.every(s => s === baseSymbol || s === '🃏')) {
+      const multiplier = (wilds === 3 ? 10 : wilds === 2 ? 4 : wilds === 1 ? 2 : 1) * (isBonusGame ? 2 : 1);
+      const win = 10 * multiplier;
+      totalWin += win;
+
+      line.forEach(i => {
+        const el = document.querySelectorAll('.reel')[i];
+        if (reels[i] === '🃏') {
+          el.classList.add('wild-effect');
+          el.innerText = '🔥';
+        }
+      });
+
+      if (wilds === 3 && isBonusGame && !jackpotTriggered) {
+        jackpotTriggered = true;
+        showPopup('🎉 JACKPOT! x500 GEWONNEN!', 'red');
+        totalWin += 500;
+      }
+
+      if (wilds === 3 && isBonusGame) {
+        bonusSpinsRemaining += 10;
+        showPopup('🎉 10 EXTRA BONUS SPINS!', '#ff0');
+        updateBonusCounter();
+      }
+
+      if (win >= 100) showPopup(`💰 MEGA WIN: ${win} punten!`, 'gold');
+    }
+  }
+  return totalWin;
+}
+
+function showPopup(message, bg) {
+  const popup = document.createElement('div');
+  popup.className = 'big-win-popup';
+  popup.innerText = message;
+  popup.style.background = bg;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 4000);
+}
 
 function startBonusGame() {
   bonusSpinsRemaining = 10;
   isBonusGame = true;
   jackpotTriggered = false;
-  showBonusPopup();
   updateBonusCounter();
-  setReelsToBonusMode();
-}
-
-function showBonusPopup(extra = false) {
-  const popup = document.createElement('div');
-  popup.id = 'bonus-popup';
-  popup.innerText = extra ? '🎉 10 EXTRA BONUS SPINS!' : '🎰 BONUS GAME - 10 Gratis Spins!';
-  popup.style.position = 'fixed';
-  popup.style.top = '20px';
-  popup.style.right = '20px';
-  popup.style.backgroundColor = '#ff0';
-  popup.style.padding = '12px';
-  popup.style.fontSize = '20px';
-  popup.style.fontWeight = 'bold';
-  popup.style.borderRadius = '8px';
-  popup.style.zIndex = '1000';
-  document.body.appendChild(popup);
-  setTimeout(() => popup.remove(), 4000);
+  showPopup('🎰 BONUS GAME - 10 Gratis Spins!', '#ff0');
+  document.querySelectorAll('.reel').forEach(r => r.classList.add('bonus-mode'));
 }
 
 function updateBonusCounter() {
@@ -55,243 +105,46 @@ function updateBonusCounter() {
   if (!counter) {
     counter = document.createElement('div');
     counter.id = 'bonus-counter';
-    counter.style.position = 'fixed';
-    counter.style.top = '60px';
-    counter.style.right = '20px';
-    counter.style.backgroundColor = '#fff';
-    counter.style.padding = '8px';
-    counter.style.border = '2px solid #000';
-    counter.style.zIndex = '1000';
     document.body.appendChild(counter);
   }
   counter.innerText = `Bonus Spins Over: ${bonusSpinsRemaining}`;
   if (bonusSpinsRemaining <= 0) {
     counter.remove();
     isBonusGame = false;
-    resetReelsToNormal();
+    document.querySelectorAll('.reel').forEach(r => r.classList.remove('bonus-mode'));
   }
 }
 
-function calculateWinnings(symbols, bet, elements) {
-  let winnings = 0;
-  let wildCount = 0;
-  const isWinningLine = symbols.every((sym, _, arr) => sym === arr[0] || sym === '🃏');
-  if (isWinningLine) {
-    wildCount = symbols.filter(sym => sym === '🃏').length;
-
-    symbols.forEach((sym, i) => {
-      if (sym === '🃏') animateWildSymbol(elements[i]);
-      if (sym === '🃏') elements[i].innerText = '🔥WILD🔥';
-    });
-
-    let baseMultiplier = 10;
-    let wildMultiplier = 1;
-    if (wildCount === 1) wildMultiplier = 2;
-    else if (wildCount === 2) wildMultiplier = 4;
-    else if (wildCount === 3) {
-      wildMultiplier = 10;
-      if (isBonusGame) {
-        bonusSpinsRemaining += 10;
-        updateBonusCounter();
-        showBonusPopup(true);
-      }
-      if (!jackpotTriggered) jackpotCheck();
-    }
-
-    if (isBonusGame) wildMultiplier *= 2;
-    winnings = bet * baseMultiplier * wildMultiplier;
-    if (winnings >= bet * 10) showBigWinPopup(winnings);
-  }
-  return { winnings, wildCount };
-}
-
-function jackpotCheck() {
-  // logica voor dubbele 3 wilds triggeren (placeholder)
-  // bij echte implementatie tel je wild-lines per bonus game
-  jackpotTriggered = true;
-  const popup = document.createElement('div');
-  popup.className = 'big-win-popup';
-  popup.innerText = '🎉 JACKPOT! x500 GEWONNEN!';
-  popup.style.background = 'red';
-  document.body.appendChild(popup);
-  setTimeout(() => popup.remove(), 5000);
-}
-
-function checkForBonus(symbols) {
-  if (symbols.filter(sym => sym === '🃏').length >= 3 && !isBonusGame) {
-    startBonusGame();
-  }
-}
-
-function animateWildSymbol(element) {
-  element.classList.add('wild-effect');
-  setTimeout(() => element.classList.remove('wild-effect'), 1200);
-}
-
-function drawWinlines(lines) {
-  const existingCanvas = document.getElementById('winlines-canvas');
-  if (existingCanvas) existingCanvas.remove();
-
-  const canvas = document.createElement('canvas');
-  canvas.id = 'winlines-canvas';
-  canvas.style.position = 'fixed';
-  canvas.style.top = '0';
-  canvas.style.left = '0';
-  canvas.style.width = '100vw';
-  canvas.style.height = '100vh';
-  canvas.style.pointerEvents = 'none';
-  canvas.style.zIndex = '999';
-  document.body.appendChild(canvas);
-
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  let hue = 0;
-  const animateLines = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.lineWidth = 4;
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = 'gold';
-
-    lines.forEach(coords => {
-      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
-      ctx.beginPath();
-      coords.forEach((pt, index) => {
-        if (index === 0) ctx.moveTo(pt.x, pt.y);
-        else ctx.lineTo(pt.x, pt.y);
-      });
-      ctx.stroke();
-    });
-
-    hue = (hue + 3) % 360;
-  };
-
-  const interval = setInterval(animateLines, 60);
-  setTimeout(() => {
-    clearInterval(interval);
-    canvas.remove();
-  }, 1500);
-}
-
-function showBigWinPopup(amount) {
-  const popup = document.createElement('div');
-  popup.className = 'big-win-popup';
-  popup.innerText = `💰 MEGA WIN: ${amount} punten!`;
-  document.body.appendChild(popup);
-  setTimeout(() => popup.remove(), 4000);
-}
-
-function setReelsToBonusMode() {
-  document.querySelectorAll('.reel').forEach(reel => {
-    reel.classList.add('bonus-mode');
-  });
-}
-
-function resetReelsToNormal() {
-  document.querySelectorAll('.reel').forEach(reel => {
-    reel.classList.remove('bonus-mode');
-  });
-}
-
-const style = document.createElement('style');
-style.innerHTML = `
-  .wild-effect {
-    animation: flameSpark 1.2s ease-out infinite alternate;
-    position: relative;
-    color: red;
-    font-weight: bold;
-  }
-  @keyframes flameSpark {
-    0% { text-shadow: 0 0 5px red; transform: scale(1); }
-    50% { text-shadow: 0 0 20px orange, 0 0 30px yellow; transform: scale(1.2); }
-    100% { text-shadow: 0 0 5px red; transform: scale(1); }
-  }
-  .big-win-popup {
-    position: fixed;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: gold;
-    padding: 20px 40px;
-    font-size: 28px;
-    font-weight: bold;
-    border: 4px solid #000;
-    border-radius: 12px;
-    z-index: 1001;
-    animation: popupScale 0.6s ease-out;
-  }
-  @keyframes popupScale {
-    0% { transform: scale(0.5) translate(-50%, -50%); }
-    100% { transform: scale(1) translate(-50%, -50%); }
-  }
-  .reel.bonus-mode {
-    border: 2px solid #f0f;
-    background: rgba(255, 255, 0, 0.1);
-  }
-`;
-document.head.appendChild(style);
-let points = 1000;
-let bet = 10;
-
-const gameContainer = document.getElementById('game');
-const spinButton = document.getElementById('spin');
-const pointsDisplay = document.getElementById('points');
-const betDisplay = document.getElementById('bet');
-
-document.getElementById('bet-plus').addEventListener('click', () => {
-  if (bet + 10 <= points) {
-    bet += 10;
-    betDisplay.innerText = bet;
-  }
-});
-
-document.getElementById('bet-minus').addEventListener('click', () => {
-  if (bet > 10) {
-    bet -= 10;
-    betDisplay.innerText = bet;
-  }
-});
-
-function updatePoints(amount) {
-  points += amount;
-  pointsDisplay.innerText = points;
-}
-
-function createReels(symbolMatrix) {
-  gameContainer.innerHTML = '';
-  for (let row = 0; row < 3; row++) {
-    for (let col = 0; col < 3; col++) {
-      const cell = document.createElement('div');
-      cell.className = 'reel';
-      cell.innerText = symbolMatrix[row][col];
-      gameContainer.appendChild(cell);
-    }
-  }
-}
-
-spinButton.addEventListener('click', () => {
+function spin() {
   if (!walletConnected) {
-    alert('Verbind eerst je wallet!');
+    alert('Verbind eerst je wallet.');
     return;
   }
-  if (points < bet) {
+
+  if (!isBonusGame && points < 10) {
     alert('Niet genoeg punten!');
     return;
   }
 
-  updatePoints(-bet);
-  const symbols = generateRandomSymbols();
-  createReels(symbols);
+  const newSymbols = generateRandomSymbols();
+  updateBoard(newSymbols);
+  const win = checkLines(newSymbols);
 
-  // Simuleer een winst op de middelste lijn
-  const middleLine = symbols[1];
-  const middleElements = Array.from(document.getElementsByClassName('reel')).slice(3, 6);
-  const { winnings } = calculateWinnings(middleLine, bet, middleElements);
-
-  if (winnings > 0) {
-    updatePoints(winnings);
+  if (isBonusGame) {
+    bonusSpinsRemaining--;
+    updateBonusCounter();
+  } else {
+    points -= 10;
   }
 
-  checkForBonus(middleLine);
-});
+  points += win;
+  document.getElementById('points').innerText = points;
+
+  if (newSymbols.filter(s => s === '🃏').length >= 3 && !isBonusGame) {
+    startBonusGame();
+  }
+}
+
+document.getElementById('spin-button').addEventListener('click', spin);
+
+createBoard();
