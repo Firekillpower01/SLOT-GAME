@@ -1,136 +1,160 @@
 let walletAddress = null;
-let demoSolBalance = 1.0; // demo balans
+let demoSolBalance = 1.0;
 let spinCost = 0.01;
 let points = 10000;
-let currentBet = 10;
+let currentBet = 100;
+const symbols = ['🍒', '🍋', '🍊', '🍉', '💎', '⭐', '7️⃣'];
 
-const walletStatus = document.getElementById('wallet-status');
-const cryptoBalance = document.getElementById('crypto-balance');
 const pointsDisplay = document.getElementById('points');
 const betDisplay = document.getElementById('bet');
 const messageDisplay = document.getElementById('message');
-const reel1 = document.getElementById('reel1');
-const reel2 = document.getElementById('reel2');
-const reel3 = document.getElementById('reel3');
+const reelsContainer = document.getElementById('reels');
+const leaderboardList = document.getElementById('leaderboard-list');
 
-// Wallet verbinden
-const connectWallet = async () => {
-  if (window.solana && window.solana.isPhantom) {
-    try {
-      const response = await window.solana.connect();
-      walletAddress = response.publicKey.toString();
-      walletStatus.textContent = `Wallet verbonden: ${walletAddress}`;
-      updateCryptoBalance();
-    } catch (err) {
-      console.error("Wallet connectie geannuleerd");
+// 🔊 Geluiden
+const soundSpin = new Audio('sounds/spin.mp3');
+const soundWin = new Audio('sounds/win.mp3');
+const soundLose = new Audio('sounds/lose.mp3');
+
+// 🎰 Genereer 5 kolommen × 3 rijen
+function createReels() {
+    reelsContainer.innerHTML = '';
+    for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 5; col++) {
+            const cell = document.createElement('div');
+            cell.classList.add('reel');
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+            cell.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            reelsContainer.appendChild(cell);
+        }
     }
-  } else {
-    alert("Installeer Phantom Wallet extensie om verbinding te maken.");
-  }
-};
-document.getElementById('connect-wallet').addEventListener('click', connectWallet);
+}
+createReels();
 
-// Inzet verhogen
-document.getElementById('increase-bet').addEventListener('click', () => {
-  if (points >= currentBet + 10) {
-    currentBet += 10;
-    betDisplay.innerText = `Inzet: ${currentBet}`;
-  } else {
-    messageDisplay.innerText = "Niet genoeg punten voor deze inzet!";
-  }
-});
+// 🔁 Spin
+function spin() {
+    if (demoSolBalance < spinCost) {
+        messageDisplay.textContent = "Niet genoeg demo SOL!";
+        return;
+    }
 
-// Inzet verlagen
-document.getElementById('decrease-bet').addEventListener('click', () => {
-  if (currentBet > 10) {
-    currentBet -= 10;
-    betDisplay.innerText = `Inzet: ${currentBet}`;
-  }
-});
+    soundSpin.play();
+    demoSolBalance -= spinCost;
+    updateCryptoBalance();
 
-// Spin-knop
-document.getElementById('spin-button').addEventListener('click', () => {
-  if (!walletAddress) {
-    messageDisplay.innerText = "Verbind eerst je wallet om te spinnen!";
-    return;
-  }
+    const allReels = document.querySelectorAll('.reel');
+    allReels.forEach(reel => {
+        reel.classList.remove('win');
+        setTimeout(() => {
+            reel.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        }, 100);
+    });
 
-  if (demoSolBalance < spinCost) {
-    messageDisplay.innerText = "Niet genoeg demo SOL! Verhoog je demo balance.";
-    return;
-  }
+    setTimeout(checkWin, 600);
+}
 
-  demoSolBalance -= spinCost;
-  updateCryptoBalance();
+// ✅ Winlijncontrole (alle horizontale en diagonale lijnen)
+function checkWin() {
+    const grid = Array.from({ length: 3 }, (_, row) =>
+        Array.from({ length: 5 }, (_, col) => {
+            return document.querySelector(`.reel[data-row="${row}"][data-col="${col}"]`);
+        })
+    );
 
-  const reelValues = ['🍒', '🍋', '🍊', '🍉', '💎', '⭐', '7️⃣'];
+    let winningLines = [];
 
-  function spinReel(reel) {
-    const randomSymbol = reelValues[Math.floor(Math.random() * reelValues.length)];
-    reel.innerText = randomSymbol;
-  }
+    // Horizontaal
+    for (let row = 0; row < 3; row++) {
+        if (grid[row].every(cell => cell.innerText === grid[row][0].innerText)) {
+            winningLines.push(grid[row]);
+        }
+    }
 
-  spinReel(reel1);
-  spinReel(reel2);
-  spinReel(reel3);
+    // Diagonaal ↘️
+    if (grid[0][0].innerText === grid[1][1].innerText &&
+        grid[1][1].innerText === grid[2][2].innerText &&
+        grid[2][2].innerText === grid[0][0].innerText) {
+        winningLines.push([grid[0][0], grid[1][1], grid[2][2]]);
+    }
 
-  // Simuleer resultaat
-  setTimeout(() => {
-    const result = [reel1.innerText, reel2.innerText, reel3.innerText];
-    if (result[0] === result[1] && result[1] === result[2]) {
-      let winnings = currentBet * 10;
-      points += winnings;
-      pointsDisplay.innerText = `Points: ${points}`;
-      messageDisplay.innerText = `🎉 Je hebt gewonnen! ${winnings} punten!`;
+    // Diagonaal ↙️
+    if (grid[0][4].innerText === grid[1][3].innerText &&
+        grid[1][3].innerText === grid[2][2].innerText &&
+        grid[2][2].innerText === grid[0][4].innerText) {
+        winningLines.push([grid[0][4], grid[1][3], grid[2][2]]);
+    }
+
+    if (winningLines.length > 0) {
+        soundWin.play();
+        let winnings = currentBet * winningLines.length * 5;
+        points += winnings;
+        messageDisplay.textContent = `🎉 Gewonnen: ${winnings} punten!`;
+        updatePoints();
+
+        // Highlight winst
+        winningLines.flat().forEach(cell => cell.classList.add('win'));
+
+        updateLeaderboard();
     } else {
-      messageDisplay.innerText = "Helaas, probeer opnieuw!";
+        soundLose.play();
+        messageDisplay.textContent = "❌ Geen winst, probeer opnieuw!";
     }
-  }, 1000);
-});
+}
 
-// Demo SOL inzet
-document.getElementById('bet-demo-sol').addEventListener('click', () => {
-  if (!walletAddress) {
-    messageDisplay.textContent = "Verbind eerst je wallet om te spelen!";
-    return;
-  }
+function updatePoints() {
+    pointsDisplay.textContent = `Points: ${points}`;
+}
 
-  if (demoSolBalance < 0.01) {
-    messageDisplay.textContent = "Niet genoeg demo SOL!";
-    return;
-  }
-
-  demoSolBalance -= 0.01;
-  updateCryptoBalance();
-  spinReels();
-
-  let winst = Math.random() < 0.3 ? 0.03 : 0;
-  demoSolBalance += winst;
-  updateCryptoBalance();
-  showResultMessage(winst);
-});
-
-// Functie: demo balans bijwerken
 function updateCryptoBalance() {
-  cryptoBalance.textContent = `Demo Balance: ${demoSolBalance.toFixed(3)} SOL`;
+    document.getElementById('crypto-balance').textContent = `Demo Balance: ${demoSolBalance.toFixed(3)} SOL`;
 }
 
-// Functie: animatie voor spin
-function spinReels() {
-  const reels = document.querySelectorAll('.reel');
-  reels.forEach((reel) => {
-    reel.classList.add('spin-animation');
-    setTimeout(() => {
-      reel.classList.remove('spin-animation');
-    }, 500);
-  });
+// 🏆 Leaderboard
+function updateLeaderboard() {
+    let scores = JSON.parse(localStorage.getItem('leaderboard')) || [];
+    scores.push(points);
+    scores = scores.sort((a, b) => b - a).slice(0, 5);
+    localStorage.setItem('leaderboard', JSON.stringify(scores));
+
+    leaderboardList.innerHTML = '';
+    scores.forEach((score, index) => {
+        const li = document.createElement('li');
+        li.textContent = `#${index + 1}: ${score} punten`;
+        leaderboardList.appendChild(li);
+    });
 }
 
-// Functie: resultaat tonen
-function showResultMessage(winAmount) {
-  if (winAmount > 0) {
-    messageDisplay.textContent = `🎉 Je hebt ${winAmount.toFixed(2)} SOL gewonnen!`;
-  } else {
-    messageDisplay.textContent = `❌ Geen winst deze ronde. Probeer opnieuw!`;
-  }
-}
+// 🧠 Bet logica
+document.getElementById('increase-bet').addEventListener('click', () => {
+    currentBet += 10;
+    betDisplay.textContent = `Inzet: ${currentBet}`;
+});
+
+document.getElementById('decrease-bet').addEventListener('click', () => {
+    if (currentBet > 10) {
+        currentBet -= 10;
+        betDisplay.textContent = `Inzet: ${currentBet}`;
+    }
+});
+
+document.getElementById('spin-button').addEventListener('click', spin);
+document.getElementById('bet-demo-sol').addEventListener('click', spin);
+
+// Wallet connectie (vereenvoudigd)
+document.getElementById('connect-wallet').addEventListener('click', async () => {
+    if (window.solana && window.solana.isPhantom) {
+        try {
+            const response = await window.solana.connect();
+            walletAddress = response.publicKey.toString();
+            document.getElementById('wallet-status').textContent = `Wallet verbonden: ${walletAddress}`;
+        } catch {
+            alert("Verbinding geweigerd");
+        }
+    } else {
+        alert("Installeer Phantom Wallet extensie");
+    }
+});
+
+updatePoints();
+updateLeaderboard();
