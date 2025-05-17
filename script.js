@@ -3,158 +3,135 @@ let demoSolBalance = 1.0;
 let spinCost = 0.01;
 let points = 10000;
 let currentBet = 100;
-const symbols = ['🍒', '🍋', '🍊', '🍉', '💎', '⭐', '7️⃣'];
 
+const walletStatus = document.getElementById('wallet-status');
+const cryptoBalance = document.getElementById('crypto-balance');
 const pointsDisplay = document.getElementById('points');
 const betDisplay = document.getElementById('bet');
 const messageDisplay = document.getElementById('message');
-const reelsContainer = document.getElementById('reels');
-const leaderboardList = document.getElementById('leaderboard-list');
 
-// 🔊 Geluiden
-const soundSpin = new Audio('sounds/spin.mp3');
-const soundWin = new Audio('sounds/win.mp3');
-const soundLose = new Audio('sounds/lose.mp3');
+const reels = document.querySelectorAll('.reel');
 
-// 🎰 Genereer 5 kolommen × 3 rijen
-function createReels() {
-    reelsContainer.innerHTML = '';
-    for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 5; col++) {
-            const cell = document.createElement('div');
-            cell.classList.add('reel');
-            cell.dataset.row = row;
-            cell.dataset.col = col;
-            cell.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-            reelsContainer.appendChild(cell);
-        }
+// 🎵 GELUIDSEFFECTEN
+const spinSound = new Audio('sounds/spin.mp3');
+const winSound = new Audio('sounds/win.mp3');
+const loseSound = new Audio('sounds/lose.mp3');
+
+// Wallet connectie
+const connectWallet = async () => {
+  if (window.solana && window.solana.isPhantom) {
+    try {
+      const response = await window.solana.connect();
+      walletAddress = response.publicKey.toString();
+      walletStatus.textContent = `Wallet verbonden: ${walletAddress}`;
+      updateCryptoBalance();
+    } catch (err) {
+      console.error("Wallet connectie geannuleerd");
     }
-}
-createReels();
+  } else {
+    alert("Installeer Phantom Wallet extensie om verbinding te maken.");
+  }
+};
+document.getElementById('connect-wallet').addEventListener('click', connectWallet);
 
-// 🔁 Spin
-function spin() {
-    if (demoSolBalance < spinCost) {
-        messageDisplay.textContent = "Niet genoeg demo SOL!";
-        return;
-    }
-
-    soundSpin.play();
-    demoSolBalance -= spinCost;
-    updateCryptoBalance();
-
-    const allReels = document.querySelectorAll('.reel');
-    allReels.forEach(reel => {
-        reel.classList.remove('win');
-        setTimeout(() => {
-            reel.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-        }, 100);
-    });
-
-    setTimeout(checkWin, 600);
-}
-
-// ✅ Winlijncontrole (alle horizontale en diagonale lijnen)
-function checkWin() {
-    const grid = Array.from({ length: 3 }, (_, row) =>
-        Array.from({ length: 5 }, (_, col) => {
-            return document.querySelector(`.reel[data-row="${row}"][data-col="${col}"]`);
-        })
-    );
-
-    let winningLines = [];
-
-    // Horizontaal
-    for (let row = 0; row < 3; row++) {
-        if (grid[row].every(cell => cell.innerText === grid[row][0].innerText)) {
-            winningLines.push(grid[row]);
-        }
-    }
-
-    // Diagonaal ↘️
-    if (grid[0][0].innerText === grid[1][1].innerText &&
-        grid[1][1].innerText === grid[2][2].innerText &&
-        grid[2][2].innerText === grid[0][0].innerText) {
-        winningLines.push([grid[0][0], grid[1][1], grid[2][2]]);
-    }
-
-    // Diagonaal ↙️
-    if (grid[0][4].innerText === grid[1][3].innerText &&
-        grid[1][3].innerText === grid[2][2].innerText &&
-        grid[2][2].innerText === grid[0][4].innerText) {
-        winningLines.push([grid[0][4], grid[1][3], grid[2][2]]);
-    }
-
-    if (winningLines.length > 0) {
-        soundWin.play();
-        let winnings = currentBet * winningLines.length * 5;
-        points += winnings;
-        messageDisplay.textContent = `🎉 Gewonnen: ${winnings} punten!`;
-        updatePoints();
-
-        // Highlight winst
-        winningLines.flat().forEach(cell => cell.classList.add('win'));
-
-        updateLeaderboard();
-    } else {
-        soundLose.play();
-        messageDisplay.textContent = "❌ Geen winst, probeer opnieuw!";
-    }
-}
-
-function updatePoints() {
-    pointsDisplay.textContent = `Points: ${points}`;
-}
-
-function updateCryptoBalance() {
-    document.getElementById('crypto-balance').textContent = `Demo Balance: ${demoSolBalance.toFixed(3)} SOL`;
-}
-
-// 🏆 Leaderboard
-function updateLeaderboard() {
-    let scores = JSON.parse(localStorage.getItem('leaderboard')) || [];
-    scores.push(points);
-    scores = scores.sort((a, b) => b - a).slice(0, 5);
-    localStorage.setItem('leaderboard', JSON.stringify(scores));
-
-    leaderboardList.innerHTML = '';
-    scores.forEach((score, index) => {
-        const li = document.createElement('li');
-        li.textContent = `#${index + 1}: ${score} punten`;
-        leaderboardList.appendChild(li);
-    });
-}
-
-// 🧠 Bet logica
+// Inzet verhogen
 document.getElementById('increase-bet').addEventListener('click', () => {
+  if (points >= currentBet + 10) {
     currentBet += 10;
-    betDisplay.textContent = `Inzet: ${currentBet}`;
+    betDisplay.innerText = `Inzet: ${currentBet}`;
+  } else {
+    messageDisplay.innerText = "Niet genoeg punten voor deze inzet!";
+  }
 });
 
+// Inzet verlagen
 document.getElementById('decrease-bet').addEventListener('click', () => {
-    if (currentBet > 10) {
-        currentBet -= 10;
-        betDisplay.textContent = `Inzet: ${currentBet}`;
-    }
+  if (currentBet > 10) {
+    currentBet -= 10;
+    betDisplay.innerText = `Inzet: ${currentBet}`;
+  }
 });
 
-document.getElementById('spin-button').addEventListener('click', spin);
-document.getElementById('bet-demo-sol').addEventListener('click', spin);
+// SPIN
+document.getElementById('spin-button').addEventListener('click', () => {
+  if (!walletAddress) {
+    messageDisplay.innerText = "Verbind eerst je wallet om te spinnen!";
+    return;
+  }
 
-// Wallet connectie (vereenvoudigd)
-document.getElementById('connect-wallet').addEventListener('click', async () => {
-    if (window.solana && window.solana.isPhantom) {
-        try {
-            const response = await window.solana.connect();
-            walletAddress = response.publicKey.toString();
-            document.getElementById('wallet-status').textContent = `Wallet verbonden: ${walletAddress}`;
-        } catch {
-            alert("Verbinding geweigerd");
-        }
+  if (demoSolBalance < spinCost) {
+    messageDisplay.innerText = "Niet genoeg demo SOL! Verhoog je demo balance.";
+    return;
+  }
+
+  demoSolBalance -= spinCost;
+  updateCryptoBalance();
+  messageDisplay.innerText = "Spinning...";
+  spinSound.play();
+
+  spinReels(() => {
+    const symbols = Array.from(reels).map(r => r.innerText);
+    const middleRow = [symbols[2], symbols[5], symbols[8], symbols[11], symbols[14]];
+
+    if (middleRow.every(sym => sym === middleRow[0])) {
+      let winnings = currentBet * 10;
+      points += winnings;
+      pointsDisplay.innerText = `Points: ${points}`;
+      messageDisplay.innerText = `🎉 Winst! ${winnings} punten!`;
+      winSound.play();
     } else {
-        alert("Installeer Phantom Wallet extensie");
+      messageDisplay.innerText = "❌ Geen winst, probeer opnieuw!";
+      loseSound.play();
     }
+  });
 });
 
-updatePoints();
-updateLeaderboard();
+// DEMO SOL
+document.getElementById('bet-demo-sol').addEventListener('click', () => {
+  if (!walletAddress) {
+    messageDisplay.textContent = "Verbind eerst je wallet om te spelen!";
+    return;
+  }
+
+  if (demoSolBalance < 0.01) {
+    messageDisplay.textContent = "Niet genoeg demo SOL!";
+    return;
+  }
+
+  demoSolBalance -= 0.01;
+  updateCryptoBalance();
+  spinSound.play();
+
+  spinReels(() => {
+    const winAmount = Math.random() < 0.3 ? 0.03 : 0;
+    demoSolBalance += winAmount;
+    updateCryptoBalance();
+    if (winAmount > 0) {
+      messageDisplay.textContent = `🎉 Je hebt ${winAmount.toFixed(2)} SOL gewonnen!`;
+      winSound.play();
+    } else {
+      messageDisplay.textContent = `❌ Geen winst deze ronde. Probeer opnieuw!`;
+      loseSound.play();
+    }
+  });
+});
+
+// Functie: Crypto balans bijwerken
+function updateCryptoBalance() {
+  cryptoBalance.textContent = `Demo Balance: ${demoSolBalance.toFixed(3)} SOL`;
+}
+
+// 🎰 Reel spin animatie + symbolen update
+function spinReels(callback) {
+  const symbols = ['🍒', '🍋', '🍊', '🍉', '💎', '⭐', '7️⃣'];
+  reels.forEach((reel, index) => {
+    reel.classList.add('spin-animation');
+    setTimeout(() => {
+      reel.classList.remove('spin-animation');
+      reel.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+      if (index === reels.length - 1 && typeof callback === 'function') {
+        callback();
+      }
+    }, 300 + index * 100); // beetje vertraging tussen reels
+  });
+}
