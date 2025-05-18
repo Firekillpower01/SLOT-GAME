@@ -1,6 +1,6 @@
 body {
   background: linear-gradient(to bottom right, #1a1a2e, #16213e);
-  font-family: 'Arial', sans-serif;
+  font-family: Arial, sans-serif;
   color: white;
   text-align: center;
   margin: 0;
@@ -13,23 +13,40 @@ h1 {
   color: #ffd700;
 }
 
+#wallet-status {
+  margin: 10px;
+  font-weight: bold;
+}
+
+#balance {
+  font-size: 1.2em;
+  margin: 10px;
+  color: #0f0;
+}
+
 #game {
+  margin: 20px auto;
   display: grid;
   grid-template-columns: repeat(3, 100px);
   grid-template-rows: repeat(3, 100px);
   gap: 10px;
-  margin: 30px auto;
   justify-content: center;
 }
 
 .reel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2em;
   background-color: #222;
   border: 2px solid #555;
   border-radius: 10px;
+  font-size: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  color: white;
+}
+
+.controls {
+  margin: 20px;
 }
 
 button {
@@ -37,30 +54,20 @@ button {
   margin: 5px;
   font-size: 1em;
   font-weight: bold;
-  background-color: #ffcc00;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
+  background-color: #ffcc00;
   color: #000;
+  cursor: pointer;
 }
 
 button:hover {
   background-color: #ffaa00;
 }
 
-#wallet-status {
-  margin: 10px;
-  font-weight: bold;
-  color: #00ff00;
-}
-
-#solana-balance {
-  font-size: 1.2em;
-  margin-top: 10px;
-}
-
 .wild-effect {
   animation: flameSpark 1.2s ease-out infinite alternate;
+  position: relative;
   color: red;
   font-weight: bold;
 }
