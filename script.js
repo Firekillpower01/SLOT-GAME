@@ -1,5 +1,6 @@
 let walletConnected = false;
 let balance = 100;
+let currentBet = 1;
 const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '🃏']; // 🃏 = wild
 
 document.getElementById('connect-wallet').addEventListener('click', () => {
@@ -9,6 +10,10 @@ document.getElementById('connect-wallet').addEventListener('click', () => {
 
 function updateBalance() {
   document.getElementById('balance').innerText = `Saldo: ${balance} SOL`;
+}
+
+function updateBetDisplay() {
+  document.getElementById('bet-amount').innerText = currentBet;
 }
 
 function generateRandomGrid() {
@@ -37,11 +42,11 @@ function drawGrid(grid) {
 function calculateWin(grid, bet) {
   let win = 0;
   const lines = [
-    [0, 1, 2], // bovenste rij
-    [3, 4, 5], // midden
-    [6, 7, 8], // onder
-    [0, 4, 8], // diagonaal
-    [2, 4, 6]  // diagonaal
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 4, 8],
+    [2, 4, 6]
   ];
   lines.forEach(line => {
     const lineSymbols = line.map(i => grid[i]);
@@ -75,9 +80,24 @@ function spin(bet = 0) {
 }
 
 document.getElementById('spin-free').addEventListener('click', () => spin(0));
-document.getElementById('spin-sol').addEventListener('click', () => spin(1));
+document.getElementById('spin-sol').addEventListener('click', () => spin(currentBet));
+
+document.getElementById('increase-bet').addEventListener('click', () => {
+  if (currentBet < balance) {
+    currentBet++;
+    updateBetDisplay();
+  }
+});
+
+document.getElementById('decrease-bet').addEventListener('click', () => {
+  if (currentBet > 1) {
+    currentBet--;
+    updateBetDisplay();
+  }
+});
 
 window.onload = () => {
   drawGrid(generateRandomGrid());
   updateBalance();
+  updateBetDisplay();
 };
