@@ -1,72 +1,83 @@
 let walletConnected = false;
-let solanaBalance = 1000;
+let balance = 100;
+const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '🃏']; // 🃏 = wild
 
-// Connect Wallet
 document.getElementById('connect-wallet').addEventListener('click', () => {
   walletConnected = true;
   document.getElementById('wallet-status').innerText = 'Wallet Verbonden ✅';
 });
 
-// Toon rollen
-function drawGrid(symbols) {
-  const gameDiv = document.getElementById('game');
-  gameDiv.innerHTML = '';
-  symbols.flat().forEach(sym => {
-    const cell = document.createElement('div');
-    cell.classList.add('reel');
-    cell.innerText = sym;
-    if (sym === '🃏') cell.classList.add('wild-effect');
-    gameDiv.appendChild(cell);
-  });
+function updateBalance() {
+  document.getElementById('balance').innerText = `Saldo: ${balance} SOL`;
 }
 
-// Genereer symbolen
-function generateSymbols() {
-  const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '🃏'];
+function generateRandomGrid() {
   const grid = [];
-  for (let i = 0; i < 3; i++) {
-    const row = [];
-    for (let j = 0; j < 3; j++) {
-      row.push(symbols[Math.floor(Math.random() * symbols.length)]);
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
+      const randSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+      grid.push(randSymbol);
     }
-    grid.push(row);
   }
   return grid;
 }
 
-// Winstberekening
-function calculateWinnings(symbols) {
-  let winnings = 0;
-  for (let row of symbols) {
-    if (row.every(sym => sym === row[0] || sym === '🃏')) {
-      winnings += 100;
-    }
-  }
-  return winnings;
+function drawGrid(grid) {
+  const game = document.getElementById('game');
+  game.innerHTML = '';
+  grid.forEach(symbol => {
+    const cell = document.createElement('div');
+    cell.classList.add('reel');
+    cell.innerText = symbol;
+    if (symbol === '🃏') cell.classList.add('wild-effect');
+    game.appendChild(cell);
+  });
 }
 
-// Gewone spin
-document.getElementById('spin-button').addEventListener('click', () => {
-  const symbols = generateSymbols();
-  drawGrid(symbols);
-  const win = calculateWinnings(symbols);
-  if (win > 0) alert(`🎉 Gewonnen: ${win} punten!`);
-});
+function calculateWin(grid, bet) {
+  let win = 0;
+  const lines = [
+    [0, 1, 2], // bovenste rij
+    [3, 4, 5], // midden
+    [6, 7, 8], // onder
+    [0, 4, 8], // diagonaal
+    [2, 4, 6]  // diagonaal
+  ];
+  lines.forEach(line => {
+    const lineSymbols = line.map(i => grid[i]);
+    const allSame = lineSymbols.every(sym => sym === lineSymbols[0] || sym === '🃏');
+    if (allSame) {
+      const wildCount = lineSymbols.filter(sym => sym === '🃏').length;
+      const base = 10;
+      const multiplier = wildCount === 3 ? 10 : (wildCount === 2 ? 4 : (wildCount === 1 ? 2 : 1));
+      win += base * multiplier;
+    }
+  });
+  return win * bet;
+}
 
-// Spin met SOL
-document.getElementById('sol-spin-button').addEventListener('click', () => {
-  if (!walletConnected) return alert('Verbind eerst je wallet!');
-  if (solanaBalance < 10) return alert('Niet genoeg SOL!');
-  solanaBalance -= 10;
-  document.getElementById('solana-balance').innerText = `💰 Solana Balance: ${solanaBalance} SOL`;
-
-  const symbols = generateSymbols();
-  drawGrid(symbols);
-  const win = calculateWinnings(symbols);
-  if (win > 0) {
-    const solWin = win / 10;
-    solanaBalance += solWin;
-    document.getElementById('solana-balance').innerText = `💰 Solana Balance: ${solanaBalance} SOL`;
-    alert(`🎉 Gewonnen: ${solWin} SOL!`);
+function spin(bet = 0) {
+  if (bet > balance) {
+    alert("Onvoldoende saldo!");
+    return;
   }
-});
+
+  const grid = generateRandomGrid();
+  drawGrid(grid);
+
+  const winnings = calculateWin(grid, bet);
+  balance = balance - bet + winnings;
+  updateBalance();
+
+  if (winnings > 0) {
+    alert(`🎉 Gewonnen: ${winnings} SOL!`);
+  }
+}
+
+document.getElementById('spin-free').addEventListener('click', () => spin(0));
+document.getElementById('spin-sol').addEventListener('click', () => spin(1));
+
+window.onload = () => {
+  drawGrid(generateRandomGrid());
+  updateBalance();
+};
