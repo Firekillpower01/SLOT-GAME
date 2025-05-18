@@ -3,8 +3,8 @@ body {
   font-family: 'Arial', sans-serif;
   color: white;
   text-align: center;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 h1 {
@@ -14,11 +14,11 @@ h1 {
 }
 
 #game {
-  margin: 30px auto;
   display: grid;
   grid-template-columns: repeat(3, 100px);
   grid-template-rows: repeat(3, 100px);
   gap: 10px;
+  margin: 30px auto;
   justify-content: center;
 }
 
@@ -30,23 +30,18 @@ h1 {
   background-color: #222;
   border: 2px solid #555;
   border-radius: 10px;
-  transition: transform 0.2s ease;
-}
-
-.controls {
-  margin: 20px;
 }
 
 button {
   padding: 10px 20px;
+  margin: 5px;
   font-size: 1em;
+  font-weight: bold;
+  background-color: #ffcc00;
   border: none;
   border-radius: 5px;
-  margin: 5px;
-  background-color: #ffcc00;
-  color: #000;
   cursor: pointer;
-  font-weight: bold;
+  color: #000;
 }
 
 button:hover {
@@ -54,25 +49,18 @@ button:hover {
 }
 
 #wallet-status {
-  margin-top: 10px;
+  margin: 10px;
   font-weight: bold;
   color: #00ff00;
 }
 
-#bonus-counter {
+#solana-balance {
   font-size: 1.2em;
-  font-weight: bold;
-  color: #fff;
-}
-
-.reel.bonus-mode {
-  background: rgba(255, 255, 0, 0.1);
-  border: 2px solid magenta;
+  margin-top: 10px;
 }
 
 .wild-effect {
   animation: flameSpark 1.2s ease-out infinite alternate;
-  position: relative;
   color: red;
   font-weight: bold;
 }
@@ -81,24 +69,4 @@ button:hover {
   0% { text-shadow: 0 0 5px red; transform: scale(1); }
   50% { text-shadow: 0 0 20px orange, 0 0 30px yellow; transform: scale(1.2); }
   100% { text-shadow: 0 0 5px red; transform: scale(1); }
-}
-
-.big-win-popup {
-  position: fixed;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: gold;
-  padding: 20px 40px;
-  font-size: 28px;
-  font-weight: bold;
-  border: 4px solid #000;
-  border-radius: 12px;
-  z-index: 1001;
-  animation: popupScale 0.6s ease-out;
-}
-
-@keyframes popupScale {
-  0% { transform: scale(0.5) translate(-50%, -50%); }
-  100% { transform: scale(1) translate(-50%, -50%); }
 }
