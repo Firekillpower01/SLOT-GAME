@@ -1,33 +1,24 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PUMP RAIDERS</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <h1>PUMP RAIDERS 🎰</h1>
-
-  <div id="wallet-status">Wallet Niet Verbonden</div>
-  <button id="connect-wallet">🔗 Connect Wallet</button>
-
-  <div id="game">
-    <!-- 3x3 grid van rollen -->
-    <div class="reel" id="cell-0"></div>
-    <div class="reel" id="cell-1"></div>
-    <div class="reel" id="cell-2"></div>
-    <div class="reel" id="cell-3"></div>
-    <div class="reel" id="cell-4"></div>
-    <div class="reel" id="cell-5"></div>
-    <div class="reel" id="cell-6"></div>
-    <div class="reel" id="cell-7"></div>
-    <div class="reel" id="cell-8"></div>
-  </div>
-
+  
+  <div id="wallet-status">Wallet niet verbonden</div>
+  <button id="connect-wallet">Connect Wallet</button>
+  
+  <div id="solana-balance">💰 Solana Balance: 1000 SOL</div>
+  
+  <div id="game"></div>
+  
   <div class="controls">
-    <button id="spin">🎯 Spin</button>
-    <button id="reset">🔄 Reset</button>
+    <button id="spin-button">Spin</button>
+    <button id="sol-spin-button">Spin met SOL</button>
   </div>
 
   <script src="script.js"></script>
