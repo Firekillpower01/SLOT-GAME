@@ -3,8 +3,8 @@ body {
   font-family: 'Arial', sans-serif;
   color: white;
   text-align: center;
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 
 h1 {
@@ -70,6 +70,19 @@ button:hover {
   border: 2px solid magenta;
 }
 
+.wild-effect {
+  animation: flameSpark 1.2s ease-out infinite alternate;
+  position: relative;
+  color: red;
+  font-weight: bold;
+}
+
+@keyframes flameSpark {
+  0% { text-shadow: 0 0 5px red; transform: scale(1); }
+  50% { text-shadow: 0 0 20px orange, 0 0 30px yellow; transform: scale(1.2); }
+  100% { text-shadow: 0 0 5px red; transform: scale(1); }
+}
+
 .big-win-popup {
   position: fixed;
   top: 40%;
@@ -88,16 +101,4 @@ button:hover {
 @keyframes popupScale {
   0% { transform: scale(0.5) translate(-50%, -50%); }
   100% { transform: scale(1) translate(-50%, -50%); }
-}
-
-.wild-effect {
-  animation: flameSpark 1.2s ease-out infinite alternate;
-  color: red;
-  font-weight: bold;
-}
-
-@keyframes flameSpark {
-  0% { text-shadow: 0 0 5px red; transform: scale(1); }
-  50% { text-shadow: 0 0 20px orange, 0 0 30px yellow; transform: scale(1.2); }
-  100% { text-shadow: 0 0 5px red; transform: scale(1); }
 }
