@@ -1,95 +1,72 @@
 let walletConnected = false;
-let bonusSpinsRemaining = 0;
-let isBonusGame = false;
-let jackpotTriggered = false;
+let solanaBalance = 1000;
 
+// Connect Wallet
 document.getElementById('connect-wallet').addEventListener('click', () => {
   walletConnected = true;
   document.getElementById('wallet-status').innerText = 'Wallet Verbonden ✅';
 });
 
-document.getElementById('spin').addEventListener('click', () => {
-  const symbols = generateRandomSymbols();
-  renderSymbols(symbols);
-  const flatSymbols = symbols.flat();
-  checkForBonus(flatSymbols);
-});
-
-document.getElementById('reset').addEventListener('click', () => {
-  document.querySelectorAll('.reel').forEach(cell => cell.innerText = '');
-});
-
-function generateRandomSymbols() {
-  const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '🃏']; // Wild = 🃏
-  const result = [];
-  for (let row = 0; row < 3; row++) {
-    const rowSymbols = [];
-    for (let col = 0; col < 3; col++) {
-      const random = Math.floor(Math.random() * symbols.length);
-      rowSymbols.push(symbols[random]);
-    }
-    result.push(rowSymbols);
-  }
-  return result;
-}
-
-function renderSymbols(symbols) {
-  symbols.flat().forEach((sym, i) => {
-    const cell = document.getElementById(`cell-${i}`);
+// Toon rollen
+function drawGrid(symbols) {
+  const gameDiv = document.getElementById('game');
+  gameDiv.innerHTML = '';
+  symbols.flat().forEach(sym => {
+    const cell = document.createElement('div');
+    cell.classList.add('reel');
     cell.innerText = sym;
-    cell.classList.remove('wild-effect');
-    if (sym === '🃏') {
-      cell.classList.add('wild-effect');
+    if (sym === '🃏') cell.classList.add('wild-effect');
+    gameDiv.appendChild(cell);
+  });
+}
+
+// Genereer symbolen
+function generateSymbols() {
+  const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '🃏'];
+  const grid = [];
+  for (let i = 0; i < 3; i++) {
+    const row = [];
+    for (let j = 0; j < 3; j++) {
+      row.push(symbols[Math.floor(Math.random() * symbols.length)]);
     }
-  });
-}
-
-function checkForBonus(symbols) {
-  const wilds = symbols.filter(sym => sym === '🃏');
-  if (wilds.length >= 3 && !isBonusGame) {
-    startBonusGame();
+    grid.push(row);
   }
+  return grid;
 }
 
-function startBonusGame() {
-  bonusSpinsRemaining = 10;
-  isBonusGame = true;
-  showBonusPopup();
-  updateBonusCounter();
-  document.querySelectorAll('.reel').forEach(cell => {
-    cell.classList.add('bonus-mode');
-  });
-}
-
-function showBonusPopup(extra = false) {
-  const popup = document.createElement('div');
-  popup.innerText = extra ? '🎉 EXTRA BONUS SPINS!' : '🎰 BONUS GAME - 10 Gratis Spins!';
-  popup.style.position = 'fixed';
-  popup.style.top = '20px';
-  popup.style.right = '20px';
-  popup.style.backgroundColor = '#ff0';
-  popup.style.padding = '12px';
-  popup.style.fontSize = '20px';
-  popup.style.fontWeight = 'bold';
-  popup.style.borderRadius = '8px';
-  popup.style.zIndex = '1000';
-  document.body.appendChild(popup);
-  setTimeout(() => popup.remove(), 4000);
-}
-
-function updateBonusCounter() {
-  let counter = document.getElementById('bonus-counter');
-  if (!counter) {
-    counter = document.createElement('div');
-    counter.id = 'bonus-counter';
-    counter.style.position = 'fixed';
-    counter.style.top = '60px';
-    counter.style.right = '20px';
-    counter.style.backgroundColor = '#fff';
-    counter.style.padding = '8px';
-    counter.style.border = '2px solid #000';
-    counter.style.zIndex = '1000';
-    document.body.appendChild(counter);
+// Winstberekening
+function calculateWinnings(symbols) {
+  let winnings = 0;
+  for (let row of symbols) {
+    if (row.every(sym => sym === row[0] || sym === '🃏')) {
+      winnings += 100;
+    }
   }
-  counter.innerText = `Bonus Spins Over: ${bonusSpinsRemaining}`;
+  return winnings;
 }
+
+// Gewone spin
+document.getElementById('spin-button').addEventListener('click', () => {
+  const symbols = generateSymbols();
+  drawGrid(symbols);
+  const win = calculateWinnings(symbols);
+  if (win > 0) alert(`🎉 Gewonnen: ${win} punten!`);
+});
+
+// Spin met SOL
+document.getElementById('sol-spin-button').addEventListener('click', () => {
+  if (!walletConnected) return alert('Verbind eerst je wallet!');
+  if (solanaBalance < 10) return alert('Niet genoeg SOL!');
+  solanaBalance -= 10;
+  document.getElementById('solana-balance').innerText = `💰 Solana Balance: ${solanaBalance} SOL`;
+
+  const symbols = generateSymbols();
+  drawGrid(symbols);
+  const win = calculateWinnings(symbols);
+  if (win > 0) {
+    const solWin = win / 10;
+    solanaBalance += solWin;
+    document.getElementById('solana-balance').innerText = `💰 Solana Balance: ${solanaBalance} SOL`;
+    alert(`🎉 Gewonnen: ${solWin} SOL!`);
+  }
+});
